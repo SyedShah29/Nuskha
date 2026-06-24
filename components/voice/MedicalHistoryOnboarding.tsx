@@ -444,19 +444,19 @@ export const MedicalHistoryOnboarding: React.FC<
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)] overflow-hidden font-serif">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background overflow-hidden">
       <audio ref={audioRef} className="hidden" />
 
       {/* Main Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative w-full max-w-4xl mx-4 p-8"
+        className="relative w-full max-w-4xl mx-4 p-8 card-surface rounded-3xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h2 className="text-sm uppercase tracking-widest font-serif text-[var(--primary)]/50">
+            <h2 className="eyebrow">
               {language === 'urdu' ? 'طبی تاریخ' : 'Clinical Intake'}
             </h2>
           </div>
@@ -465,7 +465,7 @@ export const MedicalHistoryOnboarding: React.FC<
               onClick={() =>
                 setLanguage(language === 'urdu' ? 'english' : 'urdu')
               }
-              className="px-4 py-2 border border-[var(--primary)]/10 hover:border-[var(--primary)]/30 rounded-full text-[var(--primary)] text-xs uppercase tracking-widest transition-all"
+              className="px-4 py-2 border border-border hover:border-[#059669] rounded-xl text-foreground text-xs uppercase tracking-widest font-bold font-mono-data transition-all"
             >
               {language === 'urdu' ? 'English' : 'اردو'}
             </button>
@@ -473,9 +473,9 @@ export const MedicalHistoryOnboarding: React.FC<
         </div>
 
         {/* Progress Bar */}
-        <div className="h-[1px] bg-[var(--primary)]/10 mb-16 overflow-hidden">
+        <div className="h-1 bg-[rgba(15,17,23,0.04)] mb-16 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-[var(--primary)]"
+            className="h-full bg-[#059669]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5 }}
@@ -494,20 +494,20 @@ export const MedicalHistoryOnboarding: React.FC<
 
           {/* Voice mode hint - show when not speaking, not listening, not processing */}
           {!isListening && !isSpeaking && !isTranscribing && (
-            <p className="text-[var(--primary)]/40 text-xs uppercase tracking-widest mt-4">
+            <p className="text-muted-foreground font-mono-data text-xs font-bold uppercase tracking-widest mt-4">
               {language === 'urdu' ? 'بولنے کے لیے ٹیپ کریں' : 'Tap to speak'}
             </p>
           )}
 
           {voiceError && (
-            <p className="mt-4 max-w-md border border-red-500/20 bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+            <p className="mt-4 max-w-md border border-[#EF4444]/20 rounded-xl bg-[#EF4444]/10 px-4 py-3 text-center text-sm font-bold text-[#EF4444]">
               {voiceError}
             </p>
           )}
 
           {/* AI Speaking indicator */}
           {isSpeaking && (
-            <p className="text-[var(--secondary)] text-xs uppercase tracking-widest mt-4">
+            <p className="text-[#059669] font-mono-data font-bold text-xs uppercase tracking-widest mt-4">
               {language === 'urdu' ? 'AI بول رہا ہے...' : 'AI is speaking...'}
             </p>
           )}
@@ -517,9 +517,9 @@ export const MedicalHistoryOnboarding: React.FC<
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[var(--primary)] text-xs uppercase tracking-widest mt-4 flex items-center gap-2"
+              className="text-[#EF4444] font-mono-data font-bold text-xs uppercase tracking-widest mt-4 flex items-center gap-2"
             >
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+              <span className="w-2 h-2 bg-[#EF4444] rounded-full animate-pulse" />
               {language === 'urdu' ? 'سن رہا ہوں...' : 'Listening...'}
             </motion.p>
           )}
@@ -529,9 +529,9 @@ export const MedicalHistoryOnboarding: React.FC<
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[var(--primary)]/60 text-xs uppercase tracking-widest mt-4 flex items-center gap-2"
+              className="text-muted-foreground font-mono-data font-bold text-xs uppercase tracking-widest mt-4 flex items-center gap-2"
             >
-              <Loader2 size={12} className="animate-spin" />
+              <Loader2 size={12} className="animate-spin text-[#059669]" />
               {language === 'urdu' ? 'سمجھ رہا ہوں...' : 'Processing...'}
             </motion.p>
           )}
@@ -544,13 +544,13 @@ export const MedicalHistoryOnboarding: React.FC<
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 px-8 py-4 bg-[var(--primary)]/5 border border-[var(--primary)]/10"
+                className="mt-6 px-8 py-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl"
               >
-                <p className="text-[var(--primary)]/40 text-[10px] uppercase tracking-widest mb-2">
+                <p className="text-muted-foreground font-mono-data font-bold text-[10px] uppercase tracking-widest mb-2">
                   {language === 'urdu' ? 'آپ کا جواب:' : 'Transcription:'}
                 </p>
                 <p
-                  className={`text-[var(--primary)] text-lg ${language === 'urdu' ? 'font-urdu text-right' : ''}`}
+                  className={`text-foreground font-bold text-lg ${language === 'urdu' ? 'font-urdu text-right text-[#059669]' : ''}`}
                 >
                   {lastSpokenAnswer}
                 </p>
@@ -568,7 +568,7 @@ export const MedicalHistoryOnboarding: React.FC<
             className="text-center mb-16"
           >
             <p
-              className={`text-4xl md:text-6xl font-display text-[var(--primary)] leading-[1.1] tracking-tight ${language === 'urdu' ? 'font-urdu text-right' : ''}`}
+              className={`text-3xl md:text-5xl font-bold text-foreground leading-[1.2] tracking-tight ${language === 'urdu' ? 'font-urdu text-right text-[#059669]' : ''}`}
             >
               {language === 'urdu'
                 ? currentQuestion?.questionUrdu
@@ -584,20 +584,20 @@ export const MedicalHistoryOnboarding: React.FC<
             <div className="flex justify-center gap-6">
               <button
                 onClick={() => handleBooleanAnswer(true)}
-                className={`px-12 py-4 border text-sm uppercase tracking-widest font-serif transition-all ${
+                className={`px-12 py-4 border rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${
                   selectedOptions[0] === 'yes'
-                    ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]'
-                    : 'border-[var(--primary)]/20 text-[var(--primary)] hover:border-[var(--primary)]'
+                    ? 'bg-[#059669] text-white border-[#059669] shadow-md'
+                    : 'bg-surface border-border text-foreground hover:border-[#059669]'
                 }`}
               >
                 {language === 'urdu' ? 'ہاں' : 'Yes'}
               </button>
               <button
                 onClick={() => handleBooleanAnswer(false)}
-                className={`px-12 py-4 border text-sm uppercase tracking-widest font-serif transition-all ${
+                className={`px-12 py-4 border rounded-xl text-sm font-bold uppercase tracking-widest transition-all ${
                   selectedOptions[0] === 'no'
-                    ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]'
-                    : 'border-[var(--primary)]/20 text-[var(--primary)] hover:border-[var(--primary)]'
+                    ? 'bg-[#059669] text-white border-[#059669] shadow-md'
+                    : 'bg-surface border-border text-foreground hover:border-[#059669]'
                 }`}
               >
                 {language === 'urdu' ? 'نہیں' : 'No'}
@@ -612,10 +612,10 @@ export const MedicalHistoryOnboarding: React.FC<
                 <button
                   key={option.value}
                   onClick={() => handleOptionSelect(option.value)}
-                  className={`px-6 py-4 border text-xs uppercase tracking-widest transition-all ${
+                  className={`px-6 py-4 border rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${
                     selectedOptions.includes(option.value)
-                      ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]'
-                      : 'border-[var(--primary)]/20 text-[var(--primary)] hover:border-[var(--primary)]'
+                      ? 'bg-[#059669] text-white border-[#059669] shadow-sm'
+                      : 'bg-surface border-border text-foreground hover:border-[#059669]'
                   }`}
                 >
                   {language === 'urdu' ? option.labelUrdu : option.labelEnglish}
@@ -632,14 +632,14 @@ export const MedicalHistoryOnboarding: React.FC<
                   <button
                     key={option.value}
                     onClick={() => handleOptionSelect(option.value)}
-                    className={`px-6 py-4 border text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${
+                    className={`px-6 py-4 border rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-3 transition-all ${
                       selectedOptions.includes(option.value)
-                        ? 'bg-[var(--primary)] text-[var(--background)] border-[var(--primary)]'
-                        : 'border-[var(--primary)]/20 text-[var(--primary)] hover:border-[var(--primary)]'
+                        ? 'bg-[#059669] text-white border-[#059669] shadow-sm'
+                        : 'bg-surface border-border text-foreground hover:border-[#059669]'
                     }`}
                   >
                     {selectedOptions.includes(option.value) && (
-                      <Check size={14} />
+                      <Check size={14} className="text-white" />
                     )}
                     {language === 'urdu'
                       ? option.labelUrdu
@@ -654,7 +654,7 @@ export const MedicalHistoryOnboarding: React.FC<
             currentQuestion?.type === 'text') &&
             currentQuestion.field !== '_closing' && (
               <div className="flex flex-col items-center gap-4 mt-8">
-                <p className="text-[var(--primary)]/40 text-xs uppercase tracking-widest text-center">
+                <p className="text-muted-foreground font-mono-data font-bold text-xs uppercase tracking-widest text-center">
                   {language === 'urdu'
                     ? 'جواب دینے کے لیے مائیک پر ٹیپ کریں'
                     : 'Tap the mic to answer'}
@@ -668,7 +668,7 @@ export const MedicalHistoryOnboarding: React.FC<
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="w-20 h-20 mx-auto mb-4 bg-green-500 rounded-full flex items-center justify-center"
+                className="w-20 h-20 mx-auto mb-4 bg-[#059669] rounded-2xl flex items-center justify-center shadow-lg shadow-[#059669]/20"
               >
                 <Check size={40} className="text-white" />
               </motion.div>
@@ -685,15 +685,15 @@ export const MedicalHistoryOnboarding: React.FC<
             <button
               onClick={handleNext}
               disabled={!isAnswerValid() || isSaving || isProcessing}
-              className={`px-8 py-4 text-xs uppercase tracking-widest font-serif flex items-center gap-3 transition-all ${
+              className={`px-8 py-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-3 transition-all ${
                 isAnswerValid() && !isSaving && !isProcessing
-                  ? 'bg-[var(--primary)] text-[var(--background)] hover:bg-[var(--primary)]/90'
-                  : 'bg-[var(--primary)]/5 text-[var(--primary)]/30 border border-[var(--primary)]/10 cursor-not-allowed'
+                  ? 'bg-[#059669] text-white hover:bg-[#047857] shadow-md'
+                  : 'bg-[rgba(15,17,23,0.04)] text-muted-foreground border border-border cursor-not-allowed'
               }`}
             >
               {isSaving || isProcessing ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 size={16} className="animate-spin text-current" />
                   {language === 'urdu' ? 'محفوظ ہو رہا ہے...' : 'Saving...'}
                 </>
               ) : isLastQuestion ? (

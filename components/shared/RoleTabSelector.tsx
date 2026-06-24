@@ -30,47 +30,43 @@ export function RoleTabUI({
   layoutId: string;
 }) {
   return (
-    <div className="mb-6">
-      <div className="flex bg-indigo-50 rounded-xl p-1">
+    <div className="mb-8">
+      <div className="flex bg-[rgba(15,17,23,0.04)] rounded-xl p-1 border border-border">
         <button
           onClick={() => setUserType("patient")}
-          className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-semibold transition-all ${
+          className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-bold transition-all z-10 ${
             userType === "patient"
-              ? "text-white"
-              : "text-indigo-400 hover:text-indigo-600"
+              ? "text-foreground"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           {userType === "patient" && (
             <motion.div
               layoutId={layoutId}
-              className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-lg shadow-lg shadow-indigo-500/25"
-              transition={{ type: "spring", duration: 0.5 }}
+              className="absolute inset-0 bg-surface rounded-lg shadow-sm border border-[rgba(15,17,23,0.06)] -z-10"
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
             />
           )}
-          <span className="relative z-10 flex items-center gap-2">
-            <User className="w-4 h-4" />
-            Patient
-          </span>
+          <User className={`w-4 h-4 ${userType === "patient" ? "text-[#059669]" : ""}`} />
+          Patient
         </button>
         <button
           onClick={() => setUserType("doctor")}
-          className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-semibold transition-all ${
+          className={`relative flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg text-sm font-bold transition-all z-10 ${
             userType === "doctor"
-              ? "text-white"
-              : "text-indigo-400 hover:text-indigo-600"
+              ? "text-foreground"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
           {userType === "doctor" && (
             <motion.div
               layoutId={layoutId}
-              className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-lg shadow-lg shadow-indigo-500/25"
-              transition={{ type: "spring", duration: 0.5 }}
+              className="absolute inset-0 bg-surface rounded-lg shadow-sm border border-[rgba(15,17,23,0.06)] -z-10"
+              transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
             />
           )}
-          <span className="relative z-10 flex items-center gap-2">
-            <Stethoscope className="w-4 h-4" />
-            Doctor
-          </span>
+          <Stethoscope className={`w-4 h-4 ${userType === "doctor" ? "text-[#059669]" : ""}`} />
+          Doctor
         </button>
       </div>
     </div>

@@ -1,70 +1,67 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Noto_Nastaliq_Urdu, Playfair_Display, Lora, Geist } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  Noto_Nastaliq_Urdu,
+  Geist_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
-const inter = Inter({
-  variable: "--font-inter",
+// Primary display + body font — Satoshi-class Grotesk
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+// Monospace for ICD-11 codes, confidence numbers, SOAP data
+const geistMono = Geist_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const lora = Lora({
-  variable: "--font-lora",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
+// Urdu script
 const notoUrdu = Noto_Nastaliq_Urdu({
   variable: "--font-noto-urdu",
   subsets: ["arabic"],
   weight: ["400", "700"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
-  themeColor: "#4f46e5",
+  themeColor: "#059669",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
 };
 
 export const metadata: Metadata = {
-  title: "Shifa | AI-Powered Healthcare",
+  title: "Nuskha | AI Clinical Assistant for Pakistan",
   description:
-    "Shifa provides AI-powered voice consultations, clinical interviews, and robust medical reporting.",
+    "Pakistan's first multi-agent AI clinical assistant. Describe symptoms in Urdu or English — get a doctor-verified SOAP report with ICD-11 coding, FHIR export, and real-time emergency detection.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/logo/shifa-favicon.svg",
-    apple: "/logo/shifa-logo.svg",
+    icon: "/logo/nuskha-favicon.svg",
+    apple: "/logo/nuskha-logo.svg",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Shifa",
+    title: "Nuskha",
   },
   openGraph: {
-    title: "Shifa | AI-Powered Healthcare",
+    title: "Nuskha | AI Clinical Assistant for Pakistan",
     description:
-      "Shifa provides AI-powered clinical interviews and detailed diagnostic reports.",
+      "Multi-agent AI conducts bilingual clinical interviews, generates SOAP reports with ICD-11 codes, and connects you with PMDC-licensed doctors.",
     type: "website",
-    locale: "en_US",
+    locale: "ur_PK",
   },
   keywords: [
-    "Shifa",
-    "Shifa AI",
-    "AI doctor",
-    "clinical interview",
-    "telemedicine",
-    "AI healthcare",
-    "Urdu healthcare",
-    "Pakistani health tech",
+    "Nuskha", "نسخہ", "AI doctor Pakistan", "Urdu healthcare",
+    "SOAP report AI", "ICD-11 Pakistan", "FHIR export", "telemedicine Pakistan",
+    "clinical interview AI", "PHQ-9 Pakistan", "LangGraph medical",
   ],
 };
 
@@ -74,10 +71,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body
-        className={`${inter.variable} ${notoUrdu.variable} ${playfair.variable} ${lora.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={cn(
+        "antialiased",
+        plusJakarta.variable,
+        geistMono.variable,
+        notoUrdu.variable
+      )}
+    >
+      <body className="font-sans bg-[#F6F7F9] text-[#0F1117]">
         {children}
       </body>
     </html>

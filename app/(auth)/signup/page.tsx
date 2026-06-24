@@ -14,7 +14,7 @@ export default function SignupPage() {
         setUserType={setUserType}
         layoutId="activeTab-signup"
       />
-      <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
+      <h3 className="text-xl font-bold text-foreground mb-6 text-center">
         Create {userType === "patient" ? "Patient" : "Doctor"} Account
       </h3>
       <AuthForm mode="signup" userType={userType} />

@@ -301,15 +301,15 @@ export default function DoctorReportPage({
 
   const getUrgencyBadge = (urgency: string) => {
     const config: Record<string, { bg: string; text: string }> = {
-      emergency: { bg: 'bg-red-100 border-red-200', text: 'text-red-700' },
+      emergency: { bg: 'bg-[#EF4444]/10 border-[#EF4444]/20', text: 'text-[#EF4444]' },
       urgent: {
-        bg: 'bg-orange-100 border-orange-200',
-        text: 'text-orange-700',
+        bg: 'bg-[#F59E0B]/10 border-[#F59E0B]/20',
+        text: 'text-[#F59E0B]',
       },
-      high: { bg: 'bg-orange-100 border-orange-200', text: 'text-orange-700' },
-      standard: { bg: 'bg-blue-100 border-blue-200', text: 'text-blue-700' },
-      normal: { bg: 'bg-green-100 border-green-200', text: 'text-green-700' },
-      routine: { bg: 'bg-green-100 border-green-200', text: 'text-green-700' },
+      high: { bg: 'bg-[#F59E0B]/10 border-[#F59E0B]/20', text: 'text-[#F59E0B]' },
+      standard: { bg: 'bg-[rgba(15,17,23,0.04)] border-border', text: 'text-foreground' },
+      normal: { bg: 'bg-[#059669]/10 border-[#059669]/20', text: 'text-[#059669]' },
+      routine: { bg: 'bg-[#059669]/10 border-[#059669]/20', text: 'text-[#059669]' },
     };
     const { bg, text } = config[urgency?.toLowerCase()] || config.standard;
     return { bg, text };
@@ -317,12 +317,8 @@ export default function DoctorReportPage({
 
   if (loading || !report) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
       </div>
     );
   }
@@ -330,30 +326,30 @@ export default function DoctorReportPage({
   const urgencyStyle = getUrgencyBadge(report.priority);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-surface border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/doctor/dashboard">
-              <button className="p-2 rounded-xl hover:bg-gray-100 transition-colors">
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              <button className="p-2 rounded-xl hover:bg-[rgba(15,17,23,0.04)] transition-colors">
+                <ChevronLeft className="w-5 h-5 text-muted-foreground" />
               </button>
             </Link>
             <div className="flex items-center gap-3">
               <Image
-                src="/logo/shifa-favicon.svg"
-                alt="Shifa"
-                width={40}
-                height={40}
+                src="/logo/nuskha-emerald.svg"
+                alt="Nuskha"
+                width={32}
+                height={32}
                 className="rounded-xl"
               />
               <div>
-                <h1 className="font-semibold text-gray-800">
+                <h1 className="font-bold text-foreground">
                   SOAP Report Review
                 </h1>
-                <p className="text-xs text-gray-500">
-                  Report #{id.slice(0, 12)}
+                <p className="font-mono-data text-xs text-muted-foreground">
+                  ID: {id.slice(0, 12)}
                 </p>
               </div>
             </div>
@@ -361,24 +357,24 @@ export default function DoctorReportPage({
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              className="rounded-xl"
+              className="rounded-xl bg-surface border-border hover:bg-[rgba(15,17,23,0.02)]"
               onClick={handleDownloadPDF}
               disabled={isDownloading}
             >
               {isDownloading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="w-4 h-4 mr-2 text-muted-foreground" />
               )}
-              Download PDF
+              <span className="font-bold">Download PDF</span>
             </Button>
             <Button
               variant="outline"
-              className="rounded-xl"
+              className="rounded-xl bg-surface border-border hover:bg-[rgba(15,17,23,0.02)] hidden sm:flex"
               onClick={() => window.print()}
             >
-              <Printer className="w-4 h-4 mr-2" />
-              Print
+              <Printer className="w-4 h-4 mr-2 text-muted-foreground" />
+              <span className="font-bold">Print</span>
             </Button>
           </div>
         </div>
@@ -393,18 +389,18 @@ export default function DoctorReportPage({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              className="card-surface p-6"
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl flex items-center justify-center">
-                    <User className="w-7 h-7 text-primary" />
+                  <div className="w-14 h-14 bg-[rgba(15,17,23,0.04)] border border-border rounded-xl flex items-center justify-center">
+                    <User className="w-6 h-6 text-foreground" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-800">
+                    <h2 className="text-xl font-bold text-foreground tracking-tight">
                       {report.patientName}
                     </h2>
-                    <p className="text-gray-500">
+                    <p className="text-muted-foreground font-mono-data text-sm mt-1">
                       {report.patientInfo?.age
                         ? `${report.patientInfo.age} years old`
                         : 'Age not specified'}
@@ -417,25 +413,23 @@ export default function DoctorReportPage({
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 items-end">
+                <div className="flex flex-col gap-2 items-start sm:items-end">
                   <div
-                    className={`px-4 py-2 rounded-xl border ${urgencyStyle.bg} ${urgencyStyle.text} flex items-center gap-2`}
+                    className={`px-3 py-1 rounded-md border text-xs font-bold font-mono-data uppercase tracking-wider flex items-center gap-1.5 ${urgencyStyle.bg} ${urgencyStyle.text}`}
                   >
-                    <AlertTriangle className="w-4 h-4" />
-                    <span className="font-medium capitalize">
-                      {report.priority}
-                    </span>
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>{report.priority}</span>
                   </div>
-                  <div className="flex items-center gap-1 px-3 py-1 bg-blue-50 rounded-lg border border-blue-200">
-                    <Building className="w-3 h-3 text-blue-600" />
-                    <span className="text-xs font-medium text-blue-700">
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-[rgba(15,17,23,0.04)] rounded-md border border-border">
+                    <Building className="w-3 h-3 text-muted-foreground" />
+                    <span className="text-xs font-bold font-mono-data uppercase tracking-wider text-foreground">
                       {report.department || 'General'}
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center gap-4 text-xs font-mono-data font-bold text-muted-foreground pt-4 border-t border-border mt-4">
+                <span className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4" />
                   {new Date(report.sessionDate).toLocaleString()}
                 </span>
@@ -454,43 +448,39 @@ export default function DoctorReportPage({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              className="card-surface p-6"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold text-blue-600">S</span>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
+                  <span className="text-xl font-bold text-foreground">S</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">Subjective</h3>
+                <h3 className="text-lg font-bold text-foreground tracking-tight">Subjective</h3>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1">
-                    Chief Complaint
-                  </p>
-                  <p className="text-gray-800">
+                  <p className="eyebrow mb-2">Chief Complaint</p>
+                  <p className="text-foreground leading-relaxed">
                     {report.subjective?.chiefComplaint || 'Not specified'}
                   </p>
                 </div>
                 {report.subjective?.patientNarrative && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">
-                      Patient Narrative
-                    </p>
-                    <p className="text-gray-800">
-                      {report.subjective.patientNarrative}
-                    </p>
+                    <p className="eyebrow mb-2">Patient Narrative</p>
+                    <div className="bg-[rgba(15,17,23,0.02)] rounded-xl p-4 border border-border">
+                      <p className="text-foreground leading-relaxed italic">
+                        "{report.subjective.patientNarrative}"
+                      </p>
+                    </div>
                   </div>
                 )}
                 {report.subjective?.symptoms?.length > 0 && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500 mb-2">
-                      Reported Symptoms
-                    </p>
+                    <p className="eyebrow mb-3">Reported Symptoms</p>
                     <div className="flex flex-wrap gap-2">
                       {report.subjective.symptoms.map((symptom, i) => (
                         <span
                           key={i}
-                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm"
+                          className="px-3 py-1 bg-surface border border-border text-foreground rounded-md text-sm font-bold"
                         >
                           {symptom}
                         </span>
@@ -499,14 +489,12 @@ export default function DoctorReportPage({
                   </div>
                 )}
                 {report.medicalHistory && (
-                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-border">
                     {report.medicalHistory.chronicConditions &&
                       report.medicalHistory.chronicConditions.length > 0 && (
                         <div>
-                          <p className="text-sm font-medium text-gray-500 mb-1">
-                            Chronic Conditions
-                          </p>
-                          <p className="text-gray-800 text-sm">
+                          <p className="eyebrow mb-2">Chronic Conditions</p>
+                          <p className="text-foreground text-sm leading-relaxed">
                             {report.medicalHistory.chronicConditions.join(', ')}
                           </p>
                         </div>
@@ -514,23 +502,17 @@ export default function DoctorReportPage({
                     {report.medicalHistory.currentMedications &&
                       report.medicalHistory.currentMedications.length > 0 && (
                         <div>
-                          <p className="text-sm font-medium text-gray-500 mb-1">
-                            Current Medications
-                          </p>
-                          <p className="text-gray-800 text-sm">
-                            {report.medicalHistory.currentMedications.join(
-                              ', '
-                            )}
+                          <p className="eyebrow mb-2">Current Medications</p>
+                          <p className="text-foreground text-sm leading-relaxed">
+                            {report.medicalHistory.currentMedications.join(', ')}
                           </p>
                         </div>
                       )}
                     {report.medicalHistory.allergies &&
                       report.medicalHistory.allergies.length > 0 && (
                         <div>
-                          <p className="text-sm font-medium text-gray-500 mb-1">
-                            Allergies
-                          </p>
-                          <p className="text-red-600 text-sm">
+                          <p className="eyebrow mb-2 text-[#EF4444]">Allergies</p>
+                          <p className="text-[#EF4444] font-bold text-sm">
                             {report.medicalHistory.allergies.join(', ')}
                           </p>
                         </div>
@@ -545,47 +527,39 @@ export default function DoctorReportPage({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              className="card-surface p-6"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold text-green-600">O</span>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
+                  <span className="text-xl font-bold text-foreground">O</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">Objective</h3>
+                <h3 className="text-lg font-bold text-foreground tracking-tight">Objective</h3>
               </div>
-              <div className="space-y-4">
-                <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                  <p className="text-sm text-amber-700 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4" />
+              <div className="space-y-6">
+                <div className="bg-[#F59E0B]/10 rounded-xl p-4 border border-[#F59E0B]/20">
+                  <p className="text-sm font-bold text-[#F59E0B] flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                     <span>
-                      Vital signs not collected during virtual consultation.
-                      Patient should have vitals measured during in-person
-                      visit.
+                      Vital signs not collected during virtual consultation. Patient should have vitals measured during in-person visit.
                     </span>
                   </p>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <p className="text-xs text-gray-500 uppercase mb-1">
-                      Severity
-                    </p>
-                    <p className="font-semibold text-gray-800 capitalize">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-[rgba(15,17,23,0.02)] border border-border rounded-xl p-5 text-center">
+                    <p className="eyebrow mb-2">Severity</p>
+                    <p className="font-bold text-foreground text-lg capitalize tracking-tight">
                       {report.objective?.severity || 'Moderate'}
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <p className="text-xs text-gray-500 uppercase mb-1">
-                      Confidence
-                    </p>
-                    <p className="font-semibold text-gray-800">
+                  <div className="bg-[rgba(15,17,23,0.02)] border border-border rounded-xl p-5 text-center">
+                    <p className="eyebrow mb-2">Confidence</p>
+                    <p className="font-bold text-foreground text-lg tracking-tight font-mono-data">
                       {report.objective?.confidenceLevel || 0}%
                     </p>
                   </div>
-                  <div className="bg-gray-50 rounded-xl p-4 text-center">
-                    <p className="text-xs text-gray-500 uppercase mb-1">
-                      Symptoms
-                    </p>
-                    <p className="font-semibold text-gray-800">
+                  <div className="bg-[rgba(15,17,23,0.02)] border border-border rounded-xl p-5 text-center">
+                    <p className="eyebrow mb-2">Symptoms</p>
+                    <p className="font-bold text-foreground text-lg tracking-tight font-mono-data">
                       {report.objective?.reportedSymptoms?.length || 0}
                     </p>
                   </div>
@@ -598,66 +572,56 @@ export default function DoctorReportPage({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              className="card-surface p-6"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold text-yellow-600">A</span>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-surface border border-border rounded-xl flex items-center justify-center">
+                  <span className="text-xl font-bold text-foreground">A</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">Assessment</h3>
+                <h3 className="text-lg font-bold text-foreground tracking-tight">Assessment</h3>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1">
-                    Primary Diagnosis
-                  </p>
-                  <p className="text-xl font-semibold text-gray-800">
+                  <p className="eyebrow mb-2">Primary Diagnosis</p>
+                  <p className="text-2xl font-bold text-foreground tracking-tight">
                     {report.assessment?.primaryDiagnosis || 'Under evaluation'}
                   </p>
                 </div>
                 {report.assessment?.differentialDiagnosis &&
                   report.assessment.differentialDiagnosis.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-500 mb-2">
-                        Differential Diagnoses
-                      </p>
+                      <p className="eyebrow mb-3">Differential Diagnoses</p>
                       <div className="flex flex-wrap gap-2">
-                        {report.assessment.differentialDiagnosis.map(
-                          (dx, i) => (
-                            <span
-                              key={i}
-                              className="px-3 py-1 bg-gray-100 rounded-lg text-gray-700 text-sm"
-                            >
-                              {dx}
-                            </span>
-                          )
-                        )}
+                        {report.assessment.differentialDiagnosis.map((dx, i) => (
+                          <span
+                            key={i}
+                            className="px-3 py-1 bg-surface border border-border rounded-md text-foreground text-sm font-bold"
+                          >
+                            {dx}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   )}
                 {report.assessment?.aiAnalysis && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500 mb-1">
-                      Clinical Reasoning
-                    </p>
-                    <p className="text-gray-700 text-sm">
+                    <p className="eyebrow mb-2">Clinical Reasoning</p>
+                    <p className="text-foreground leading-relaxed text-sm">
                       {report.assessment.aiAnalysis}
                     </p>
                   </div>
                 )}
                 {report.assessment?.redFlags &&
                   report.assessment.redFlags.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 mb-2">
-                        ⚠️ Red Flags Identified
-                      </p>
+                    <div className="pt-4 border-t border-border">
+                      <p className="eyebrow mb-3 text-[#EF4444]">Red Flags Identified</p>
                       <div className="flex flex-wrap gap-2">
                         {report.assessment.redFlags.map((flag, i) => (
                           <span
                             key={i}
-                            className="flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 rounded-lg text-sm border border-red-200"
+                            className="flex items-center gap-1.5 px-3 py-1 bg-[#EF4444]/10 text-[#EF4444] rounded-md text-xs font-bold font-mono-data border border-[#EF4444]/20"
                           >
-                            <AlertTriangle className="w-3 h-3" />
+                            <AlertTriangle className="w-3.5 h-3.5" />
                             {flag}
                           </span>
                         ))}
@@ -672,29 +636,29 @@ export default function DoctorReportPage({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              className="card-surface p-6"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold text-purple-600">P</span>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-[#059669]/10 border border-[#059669]/20 rounded-xl flex items-center justify-center">
+                  <span className="text-xl font-bold text-[#059669]">P</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-800">
+                <h3 className="text-lg font-bold text-foreground tracking-tight">
                   Plan (AI Recommended)
                 </h3>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {report.plan?.recommendations &&
                   report.plan.recommendations.length > 0 && (
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {report.plan.recommendations.map((item, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-3 p-3 bg-purple-50 rounded-xl"
+                          className="flex items-start gap-4 p-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl"
                         >
-                          <span className="w-6 h-6 bg-purple-200 text-purple-700 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0">
+                          <span className="w-6 h-6 bg-foreground text-background rounded-full flex items-center justify-center text-xs font-bold font-mono-data flex-shrink-0 mt-0.5">
                             {i + 1}
                           </span>
-                          <span className="text-gray-800">{item}</span>
+                          <span className="text-foreground leading-relaxed text-sm">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -702,14 +666,12 @@ export default function DoctorReportPage({
                 {report.plan?.testsNeeded &&
                   report.plan.testsNeeded.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-500 mb-2">
-                        Recommended Tests
-                      </p>
+                      <p className="eyebrow mb-3">Recommended Tests</p>
                       <div className="flex flex-wrap gap-2">
                         {report.plan.testsNeeded.map((test, i) => (
                           <span
                             key={i}
-                            className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm"
+                            className="px-3 py-1 bg-surface border border-border rounded-md text-foreground text-sm font-bold"
                           >
                             {test}
                           </span>
@@ -718,10 +680,10 @@ export default function DoctorReportPage({
                     </div>
                   )}
                 {report.plan?.specialistReferral && (
-                  <div className="flex items-center gap-2 p-3 bg-indigo-50 rounded-xl border border-indigo-200">
-                    <Building className="w-5 h-5 text-indigo-600" />
-                    <span className="text-indigo-700">
-                      Specialist Referral: {report.plan.specialistReferral}
+                  <div className="flex items-center gap-3 p-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl mt-6">
+                    <Building className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                    <span className="text-foreground font-bold text-sm">
+                      Specialist Referral Required: <span className="text-[#059669]">{report.plan.specialistReferral}</span>
                     </span>
                   </div>
                 )}
@@ -734,30 +696,30 @@ export default function DoctorReportPage({
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24"
+              className="card-surface p-6 sticky top-24"
             >
-              <h3 className="text-lg font-bold text-gray-800 mb-4">
+              <h3 className="text-lg font-bold text-foreground mb-5 tracking-tight">
                 Review Decision
               </h3>
 
               {/* Accept/Reject Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="grid grid-cols-2 gap-3 mb-8">
                 <button
                   onClick={() => setDecision('accept')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`p-5 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-3 ${
                     decision === 'accept'
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-green-300'
+                      ? 'border-[#059669] bg-[#059669]/5 shadow-sm'
+                      : 'border-border bg-surface hover:border-[#059669]/50'
                   }`}
                 >
                   <CheckCircle
-                    className={`w-8 h-8 mx-auto mb-2 ${
-                      decision === 'accept' ? 'text-green-600' : 'text-gray-400'
+                    className={`w-8 h-8 ${
+                      decision === 'accept' ? 'text-[#059669]' : 'text-muted-foreground'
                     }`}
                   />
                   <p
-                    className={`font-medium ${
-                      decision === 'accept' ? 'text-green-700' : 'text-gray-600'
+                    className={`font-bold tracking-tight ${
+                      decision === 'accept' ? 'text-[#059669]' : 'text-foreground'
                     }`}
                   >
                     Accept
@@ -765,20 +727,20 @@ export default function DoctorReportPage({
                 </button>
                 <button
                   onClick={() => setDecision('reject')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`p-5 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-3 ${
                     decision === 'reject'
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-200 hover:border-red-300'
+                      ? 'border-[#EF4444] bg-[#EF4444]/5 shadow-sm'
+                      : 'border-border bg-surface hover:border-[#EF4444]/50'
                   }`}
                 >
                   <XCircle
-                    className={`w-8 h-8 mx-auto mb-2 ${
-                      decision === 'reject' ? 'text-red-600' : 'text-gray-400'
+                    className={`w-8 h-8 ${
+                      decision === 'reject' ? 'text-[#EF4444]' : 'text-muted-foreground'
                     }`}
                   />
                   <p
-                    className={`font-medium ${
-                      decision === 'reject' ? 'text-red-700' : 'text-gray-600'
+                    className={`font-bold tracking-tight ${
+                      decision === 'reject' ? 'text-[#EF4444]' : 'text-foreground'
                     }`}
                   >
                     Reject
@@ -787,10 +749,8 @@ export default function DoctorReportPage({
               </div>
 
               {/* Rating System */}
-              <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">
-                  Rate this AI Report
-                </h4>
+              <div className="mb-8 p-5 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl">
+                <h4 className="eyebrow mb-4 text-center">Rate AI Accuracy</h4>
                 <div className="flex items-center justify-center gap-2 mb-3">
                   {[1, 2, 3, 4, 5].map(star => (
                     <button
@@ -803,16 +763,16 @@ export default function DoctorReportPage({
                       <Star
                         className={`w-8 h-8 transition-colors ${
                           star <= (hoveredRating || rating)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
+                            ? 'fill-[#059669] text-[#059669]'
+                            : 'text-muted-foreground/30'
                         }`}
                       />
                     </button>
                   ))}
                 </div>
                 {rating > 0 && (
-                  <p className="text-center text-sm text-gray-600">
-                    You rated: {rating}/5 stars
+                  <p className="text-center text-xs font-bold font-mono-data text-muted-foreground uppercase tracking-wider mt-2">
+                    {rating}/5 stars
                   </p>
                 )}
 
@@ -821,12 +781,12 @@ export default function DoctorReportPage({
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-4"
+                    className="mt-6 pt-5 border-t border-border"
                   >
                     <Button
                       onClick={handleRegenerate}
                       disabled={isRegenerating || !notes.trim()}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-3"
+                      className="w-full bg-foreground text-background hover:bg-[#0F1117]/90 rounded-xl py-6 font-bold"
                     >
                       {isRegenerating ? (
                         <>
@@ -840,38 +800,40 @@ export default function DoctorReportPage({
                         </>
                       )}
                     </Button>
-                    <p className="text-xs text-gray-500 text-center mt-2">
-                      Add feedback notes below, then click to regenerate.
+                    <p className="text-xs text-muted-foreground text-center mt-3 leading-relaxed">
+                      Add feedback notes below to guide the AI before regenerating.
                     </p>
                   </motion.div>
                 )}
               </div>
 
               {/* Notes */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="mb-8">
+                <label className="block eyebrow mb-3">
                   Doctor's Notes / Feedback
                 </label>
                 <textarea
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
                   placeholder="Add your notes, corrections, or feedback for AI improvement..."
-                  className="w-full h-24 p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full h-32 p-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent text-sm leading-relaxed text-foreground transition-all"
                 />
               </div>
 
               {/* Prescription Button */}
               <button
                 onClick={() => setShowPrescription(!showPrescription)}
-                className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-xl mb-4 hover:bg-gray-100 transition-colors"
+                className="w-full flex items-center justify-between p-4 bg-surface border border-border rounded-xl mb-4 hover:bg-[rgba(15,17,23,0.02)] transition-colors group"
               >
                 <span className="flex items-center gap-3">
-                  <Pill className="w-5 h-5 text-primary" />
-                  <span className="font-medium text-gray-700">
+                  <div className="w-8 h-8 rounded-lg bg-[rgba(15,17,23,0.04)] flex items-center justify-center group-hover:bg-[#059669]/10 transition-colors">
+                    <Pill className="w-4 h-4 text-foreground group-hover:text-[#059669] transition-colors" />
+                  </div>
+                  <span className="font-bold text-foreground">
                     Write Prescription
                   </span>
                 </span>
-                <span className="text-gray-400">
+                <span className="text-muted-foreground font-mono-data text-lg">
                   {showPrescription ? '−' : '+'}
                 </span>
               </button>
@@ -882,31 +844,30 @@ export default function DoctorReportPage({
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="mb-6 overflow-hidden"
+                    className="mb-8 overflow-hidden"
                   >
                     <textarea
                       value={prescription}
                       onChange={e => setPrescription(e.target.value)}
                       placeholder="Enter prescription details...&#10;e.g., Panadol 500mg - 1 tablet 3 times daily after meals for 5 days"
-                      className="w-full h-32 p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 mb-3"
+                      className="w-full h-40 p-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent text-sm leading-relaxed text-foreground transition-all mb-4"
                     />
-                    <label className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl cursor-pointer">
+                    <label className="flex items-start gap-3 p-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl cursor-pointer hover:bg-[rgba(15,17,23,0.04)] transition-colors">
                       <input
                         type="checkbox"
                         checked={includeDoctorDetails}
                         onChange={e =>
                           setIncludeDoctorDetails(e.target.checked)
                         }
-                        className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        className="mt-0.5 w-4 h-4 rounded border-border text-[#059669] focus:ring-[#059669] bg-surface"
                       />
                       <div>
-                        <span className="text-sm font-medium text-blue-700 flex items-center gap-2">
-                          <Share2 className="w-4 h-4" />
+                        <span className="text-sm font-bold text-foreground flex items-center gap-2">
+                          <Share2 className="w-3.5 h-3.5 text-muted-foreground" />
                           Include my details in prescription
                         </span>
-                        <p className="text-xs text-blue-600 mt-0.5">
-                          Your name, specialization, license, and contact info
-                          will be visible to patient
+                        <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                          Your name, specialization, license, and contact info will be visible to the patient.
                         </p>
                       </div>
                     </label>
@@ -917,38 +878,40 @@ export default function DoctorReportPage({
               {/* Chat with AI */}
               <button
                 onClick={() => setShowChat(true)}
-                className="w-full flex items-center justify-between p-4 bg-primary/5 rounded-xl mb-6 hover:bg-primary/10 transition-colors"
+                className="w-full flex items-center justify-between p-4 bg-surface border border-border rounded-xl mb-8 hover:bg-[rgba(15,17,23,0.02)] transition-colors group"
               >
                 <span className="flex items-center gap-3">
-                  <MessageSquare className="w-5 h-5 text-primary" />
-                  <span className="font-medium text-primary">
-                    Chat with Report
+                  <div className="w-8 h-8 rounded-lg bg-[rgba(15,17,23,0.04)] flex items-center justify-center group-hover:bg-[#059669]/10 transition-colors">
+                    <MessageSquare className="w-4 h-4 text-foreground group-hover:text-[#059669] transition-colors" />
+                  </div>
+                  <span className="font-bold text-foreground">
+                    Query Report AI
                   </span>
                 </span>
-                <span className="text-primary/60 text-sm">Ask questions</span>
+                <span className="eyebrow text-[10px]">Chat</span>
               </button>
 
               {/* Submit Button */}
               <Button
                 onClick={handleSubmitReview}
                 disabled={!decision || !rating || isSubmitting}
-                className="w-full py-6 bg-gradient-to-r from-primary to-secondary rounded-xl disabled:opacity-50"
+                className="w-full py-6 btn-primary rounded-xl disabled:opacity-50 text-base"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin text-current" />
                     Submitting...
                   </>
                 ) : (
                   <>
                     <Send className="w-5 h-5 mr-2" />
-                    Submit Review
+                    Submit Final Review
                   </>
                 )}
               </Button>
               {!rating && decision && (
-                <p className="text-xs text-gray-500 text-center mt-2">
-                  Please rate the report before submitting
+                <p className="text-xs text-[#EF4444] font-bold text-center mt-3">
+                  * Please rate the report accuracy before submitting
                 </p>
               )}
             </motion.div>
@@ -963,60 +926,67 @@ export default function DoctorReportPage({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             onClick={() => setShowChat(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-3xl p-6 max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="card-surface p-0 max-w-lg w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl"
               onClick={e => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-800">
-                  Chat with Report
-                </h3>
+              <div className="flex items-center justify-between p-6 border-b border-border bg-surface">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#059669]/10 flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 text-[#059669]" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground tracking-tight">
+                    Report Assistant
+                  </h3>
+                </div>
                 <button
                   onClick={() => setShowChat(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg"
+                  className="p-2 hover:bg-[rgba(15,17,23,0.04)] rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-500" />
+                  <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
               {/* Chat Messages */}
-              <div className="flex-1 bg-gray-50 rounded-xl p-4 mb-4 min-h-[300px] max-h-[400px] overflow-y-auto">
+              <div className="flex-1 bg-background p-6 min-h-[350px] max-h-[450px] overflow-y-auto">
                 {chatMessages.length === 0 ? (
-                  <div className="text-center text-gray-500 py-8">
-                    <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>Ask questions about this report</p>
-                    <p className="text-sm mt-1">
-                      E.g., "Why was this diagnosis suggested?"
+                  <div className="text-center flex flex-col items-center justify-center h-full">
+                    <div className="w-16 h-16 bg-surface border border-border rounded-2xl flex items-center justify-center mb-5">
+                      <MessageSquare className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <p className="font-bold text-foreground mb-2">Query the AI</p>
+                    <p className="text-sm text-muted-foreground">
+                      Ask questions about reasoning, guidelines, or diagnostics.
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-6">
                     {chatMessages.map((msg, i) => (
                       <div
                         key={i}
                         className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[80%] rounded-xl p-3 ${
+                          className={`max-w-[85%] rounded-2xl p-4 ${
                             msg.role === 'user'
-                              ? 'bg-primary text-white'
-                              : 'bg-white border border-gray-200'
+                              ? 'bg-[#059669] text-white rounded-tr-sm'
+                              : 'bg-surface border border-border text-foreground rounded-tl-sm'
                           }`}
                         >
-                          <p className="text-sm">{msg.content}</p>
+                          <p className="text-sm leading-relaxed">{msg.content}</p>
                         </div>
                       </div>
                     ))}
                     {isChatLoading && (
                       <div className="flex justify-start">
-                        <div className="bg-white border border-gray-200 rounded-xl p-3">
-                          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                        <div className="bg-surface border border-border rounded-2xl rounded-tl-sm p-4">
+                          <Loader2 className="w-5 h-5 animate-spin text-[#059669]" />
                         </div>
                       </div>
                     )}
@@ -1026,23 +996,25 @@ export default function DoctorReportPage({
               </div>
 
               {/* Chat Input */}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={e => setChatInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSendChat()}
-                  placeholder="Type your question..."
-                  className="flex-1 px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  disabled={isChatLoading}
-                />
-                <Button
-                  onClick={handleSendChat}
-                  disabled={isChatLoading || !chatInput.trim()}
-                  className="rounded-xl bg-primary"
-                >
-                  <Send className="w-4 h-4" />
-                </Button>
+              <div className="p-4 border-t border-border bg-surface">
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSendChat()}
+                    placeholder="Type your clinical query..."
+                    className="flex-1 px-4 py-3 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#059669] focus:border-transparent text-sm"
+                    disabled={isChatLoading}
+                  />
+                  <Button
+                    onClick={handleSendChat}
+                    disabled={isChatLoading || !chatInput.trim()}
+                    className="rounded-xl btn-primary px-5"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

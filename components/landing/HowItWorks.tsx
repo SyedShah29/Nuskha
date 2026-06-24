@@ -1,101 +1,120 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Mic, Database, FileSignature } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
+import { ChatCircleDots, Heartbeat, FileText } from "@phosphor-icons/react";
 
-const steps: { id: number; title: string; description: string; icon: LucideIcon; gradient: string }[] = [
+const steps = [
   {
-    id: 1,
+    id: "01",
     title: "Adaptive Clinical Intake",
-    description: "Initiate an autonomous conversation in Urdu or English. Our AI agent actively listens, parses symptom timelines, and asks targeted, medically-relevant follow-up questions to build a comprehensive subjective history.",
-    icon: Mic,
-    gradient: "bg-[var(--primary)] text-[var(--background)]",
+    desc: "Speak naturally in Urdu or English. The AI Interview Agent parses your symptom timeline and asks targeted, medically-relevant follow-up questions.",
+    icon: ChatCircleDots,
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80"
   },
   {
-    id: 2,
-    title: "RAG-Powered Analysis",
-    description: "The captured data is instantly cross-referenced against vast, verified medical datasets (MedQA, PubMedQA). The system filters for critical red flags and formulates differential diagnostic probabilities.",
-    icon: Database,
-    gradient: "bg-[var(--primary)] text-[var(--background)]",
+    id: "02",
+    title: "Multi-Agent RAG Analysis",
+    desc: "Your data is passed to the Reasoning Agent, which cross-references PubMed citations and runs drug-interaction checks in real-time.",
+    icon: Heartbeat,
+    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80"
   },
   {
-    id: 3,
-    title: "SOAP Report Generation",
-    description: "A highly structured, professional SOAP (Subjective, Objective, Assessment, Plan) report is synthesized. This is immediately securely routed to the physician portal for final review and validation.",
-    icon: FileSignature,
-    gradient: "bg-[var(--primary)] text-[var(--background)]",
+    id: "03",
+    title: "SOAP & Doctor Review",
+    desc: "The Documentation Agent generates a formatted SOAP report with ICD-11 codes and routes it directly to a PMDC-licensed physician for final review.",
+    icon: FileText,
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80"
   },
 ];
 
 export const HowItWorks = () => {
-  return (
-    <section id="how-it-works" className="py-32 bg-[var(--background)] relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(27,33,29,0.02),transparent_50%)]" />
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Track scroll progress of the entire timeline container
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"]
+  });
 
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="text-center mb-24">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-[var(--primary)] font-serif italic text-sm mb-4 block"
-          >
-            Clinical Methodology
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="font-display text-4xl md:text-6xl tracking-wide text-[var(--primary)] mb-6"
-          >
-            THE ARCHITECTURE OF CARE
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-[var(--primary)]/70 max-w-3xl mx-auto font-serif leading-relaxed"
-          >
-            Shifa operates on a stringent three-phase autonomous protocol, ensuring that every patient interaction is medically rigorous, empathetic, and perfectly formatted for physician review.
-          </motion.p>
+  // Smooth out the scale value so it doesn't jump aggressively
+  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  return (
+    <section id="how-it-works" className="py-32 bg-[#F6F7F9] relative overflow-hidden border-t border-[rgba(15,17,23,0.04)] border-b">
+      <div className="container mx-auto px-4 md:px-6">
+        
+        {/* Header */}
+        <div className="mb-24 text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0F1117] tracking-tight">
+            The architecture of care.
+          </h2>
         </div>
 
-        <div className="steps-container relative max-w-6xl mx-auto">
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="hidden md:block absolute top-12 left-[15%] right-[15%] h-px bg-[var(--primary)]/20 origin-left"
-          />
+        {/* Vertical Alternating Timeline */}
+        <div ref={containerRef} className="relative max-w-6xl mx-auto flex flex-col gap-24 md:gap-32">
+          
+          {/* Vertical Connecting Line (Scroll Linked) */}
+          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-[rgba(15,17,23,0.06)] transform md:-translate-x-1/2 hidden md:block">
+            <motion.div 
+              className="w-full bg-[#059669] origin-top h-full"
+              style={{ scaleY }}
+            />
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-            {steps.map((step, index) => (
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            const isEven = i % 2 !== 0;
+
+            return (
               <motion.div
                 key={step.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15, duration: 0.8 }}
-                className="relative text-center"
+                viewport={{ once: false, margin: "-20% 0px -20% 0px" }}
+                transition={{ duration: 1.2, ease: "easeInOut" }}
+                className={`flex flex-col ${isEven ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12 lg:gap-24 relative z-10 group`}
               >
-                <div className={`w-24 h-24 rounded-full ${step.gradient} flex items-center justify-center mx-auto mb-8 relative z-10 shadow-lg`}>
-                  <step.icon className="w-8 h-8" strokeWidth={1.5} />
+                {/* Timeline Number Node (Desktop) */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-white border border-[rgba(15,17,23,0.08)] rounded-full hidden md:flex items-center justify-center shadow-sm z-20 transition-transform duration-700 group-hover:scale-110">
+                  <span className="font-mono-data font-bold text-[#059669]">{step.id}</span>
                 </div>
 
-                <div className="mb-4">
-                  <span className="text-[var(--primary)]/30 font-display text-6xl font-bold">0{step.id}</span>
+                {/* Text Content */}
+                <div className={`flex-1 w-full ${isEven ? 'md:text-left' : 'md:text-right'}`}>
+                  <div className={`flex items-center gap-4 mb-6 ${isEven ? 'justify-start' : 'md:justify-end'}`}>
+                    <span className="text-6xl font-display text-[#0F1117]/5 font-bold tracking-tighter leading-none md:hidden block">
+                      {step.id}
+                    </span>
+                    <div className="w-12 h-12 rounded-xl border border-[rgba(15,17,23,0.08)] bg-white flex items-center justify-center shadow-sm">
+                      <Icon size={24} weight="duotone" className="text-[#059669]" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-[#0F1117] mb-4">{step.title}</h3>
+                  <p className="text-[#6B7280] leading-relaxed text-lg max-w-md ${isEven ? 'mr-auto' : 'ml-auto md:mr-0'}">
+                    {step.desc}
+                  </p>
                 </div>
 
-                <h3 className="font-display text-xl text-[var(--primary)] mb-4">{step.title}</h3>
-                <p className="text-[var(--primary)]/60 font-sans leading-relaxed text-sm max-w-sm mx-auto">{step.description}</p>
+                {/* Image Card */}
+                <div className="flex-1 w-full">
+                  <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden bento-dark shadow-xl cursor-crosshair">
+                    <div className="absolute inset-0 z-0 pointer-events-none">
+                      <img 
+                        src={step.image} 
+                        alt={step.title} 
+                        className="w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-105" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
+
       </div>
     </section>
   );

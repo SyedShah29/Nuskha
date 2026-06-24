@@ -30,8 +30,6 @@ import {
 } from '@/components/ui/ThinkingActivity';
 import { VoiceOrb } from '@/components/ui/VoiceOrbNew';
 
-const HEXAGON_BG = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%233f69b8' fill-opacity='0.21' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
-
 interface ThinkingStep {
   id: string;
   agent: string;
@@ -99,24 +97,24 @@ interface InterviewState {
 }
 
 function getConfidenceColor(level: number) {
-  if (level >= 80) return 'text-green-600';
-  if (level >= 50) return 'text-yellow-600';
-  return 'text-blue-600';
+  if (level >= 80) return 'text-[#059669]';
+  if (level >= 50) return 'text-[#F59E0B]';
+  return 'text-foreground';
 }
 
 function getSeverityBadge(severity: string) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
-    critical: { bg: 'bg-red-500', text: 'text-white', label: 'Critical' },
-    emergency: { bg: 'bg-red-500', text: 'text-white', label: 'Emergency' },
-    urgent: { bg: 'bg-orange-500', text: 'text-white', label: 'Urgent' },
-    high: { bg: 'bg-orange-500', text: 'text-white', label: 'High' },
-    moderate: { bg: 'bg-yellow-500', text: 'text-white', label: 'Moderate' },
-    normal: { bg: 'bg-green-500', text: 'text-white', label: 'Stable' },
-    initial: { bg: 'bg-blue-500', text: 'text-white', label: 'Initial' },
+    critical: { bg: 'bg-[#EF4444]', text: 'text-white', label: 'Critical' },
+    emergency: { bg: 'bg-[#EF4444]', text: 'text-white', label: 'Emergency' },
+    urgent: { bg: 'bg-[#F97316]', text: 'text-white', label: 'Urgent' },
+    high: { bg: 'bg-[#F97316]', text: 'text-white', label: 'High' },
+    moderate: { bg: 'bg-[#F59E0B]', text: 'text-white', label: 'Moderate' },
+    normal: { bg: 'bg-[#059669]', text: 'text-white', label: 'Stable' },
+    initial: { bg: 'bg-foreground', text: 'text-white', label: 'Initial' },
   };
   const { bg, text, label } = config[severity] || config.initial;
   return (
-    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text}`}>
+    <span className={`px-2 py-0.5 rounded-lg text-xs font-bold font-mono-data tracking-wide uppercase ${bg} ${text}`}>
       {label}
     </span>
   );
@@ -226,8 +224,8 @@ function InterviewPageContent() {
       const welcomeMessage: Message = {
         id: '1',
         role: 'assistant',
-        content: "Hello! I'm your AI health assistant. I'll ask you some questions to understand your symptoms better. What brings you here today?",
-        urdu: 'السلام علیکم! میں آپ کا اے آئی ہیلتھ اسسٹنٹ ہوں۔ میں آپ کی علامات کو بہتر سمجھنے کے لیے کچھ سوالات پوچھوں گا۔ آج آپ یہاں کیوں آئے ہیں؟',
+        content: "Hello! I'm your Clinical AI. I'll ask you some questions to understand your symptoms better. What brings you here today?",
+        urdu: 'السلام علیکم! میں آپ کا کلینیکل اے آئی ہوں۔ میں آپ کی علامات کو بہتر سمجھنے کے لیے کچھ سوالات پوچھوں گا۔ آج آپ یہاں کیوں آئے ہیں؟',
         timestamp: new Date(),
         severity: 'normal',
         confidenceLevel: 0,
@@ -560,40 +558,43 @@ function InterviewPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f2f1f3', backgroundImage: HEXAGON_BG }}>
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
       </div>
     );
   }
 
   if (mode === 'voice') {
     return (
-      <div className="min-h-screen flex" style={{ backgroundColor: '#f2f1f3', backgroundImage: HEXAGON_BG }}>
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
-          <header className="bg-[#2c4d7b] border-b border-[#1e3557] z-40 shadow-lg flex-shrink-0">
-            <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="min-h-screen flex bg-background relative overflow-hidden">
+        {/* Abstract Background Element */}
+        <div className="absolute top-1/4 left-1/4 w-[800px] h-[800px] bg-[#059669]/5 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+
+        <div className="flex-1 flex flex-col h-screen overflow-hidden relative z-10">
+          <header className="bg-surface/80 backdrop-blur-xl border-b border-border z-40">
+            <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Link href="/patient/dashboard">
-                  <button className="p-2 rounded-xl hover:bg-white/20 transition-colors">
-                    <ChevronLeft className="w-5 h-5 text-white" />
+                  <button className="p-2 rounded-xl hover:bg-[rgba(15,17,23,0.04)] border border-transparent hover:border-border transition-colors">
+                    <ChevronLeft className="w-5 h-5 text-foreground" />
                   </button>
                 </Link>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm overflow-hidden bg-white/10">
-                    <Image src="/logo/shifa-logo.svg" alt="Shifa" width={40} height={40} />
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[rgba(15,17,23,0.06)] bg-surface shadow-sm overflow-hidden">
+                    <Image src="/images/nuskha_logo.png" alt="Nuskha" width={40} height={40} className="object-cover" />
                   </div>
                   <div>
-                    <h1 className="font-semibold text-white">Voice Interview</h1>
-                    <p className="text-xs text-white/70">AI-powered clinical assessment</p>
+                    <h1 className="font-bold text-foreground tracking-tight leading-none">Clinical Voice AI</h1>
+                    <p className="text-xs text-muted-foreground mt-1 font-mono-data">Analysis Session</p>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-lg shadow-sm">
-                  <Clock className="w-4 h-4 text-white/70" />
-                  <span className="text-sm font-medium text-white">{formatTime(state.sessionTime)}</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-[rgba(15,17,23,0.04)] border border-border rounded-lg shadow-sm">
+                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-bold font-mono-data text-foreground">{formatTime(state.sessionTime)}</span>
                 </div>
-                <button onClick={() => setState((prev) => ({ ...prev, showEndDialog: true }))} className="px-4 py-1.5 text-sm font-medium text-red-500 bg-white rounded-xl hover:bg-red-50 transition-colors">
+                <button onClick={() => setState((prev) => ({ ...prev, showEndDialog: true }))} className="btn-ghost text-[#EF4444] hover:bg-[#EF4444]/10 border border-transparent hover:border-[#EF4444]/20">
                   End Session
                 </button>
               </div>
@@ -603,14 +604,14 @@ function InterviewPageContent() {
           <main className="flex-1 flex flex-col items-center justify-center px-4 py-8 overflow-y-auto">
             <AnimatePresence mode="wait">
               {state.messages.length > 0 && (
-                <motion.div key={state.messages[state.messages.length - 1].id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-lg mb-8">
-                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <motion.div key={state.messages[state.messages.length - 1].id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-2xl mb-8">
+                  <div className="card-surface p-8 text-center">
                     {state.messages[state.messages.length - 1].role === 'assistant' && state.isLoading && (
                       <ThinkingActivity isThinking={true} steps={state.currentThinkingSteps} />
                     )}
-                    <p className="text-slate-700 text-center text-lg mb-2">{state.messages[state.messages.length - 1].content}</p>
+                    <p className="text-foreground text-xl leading-relaxed mb-4">{state.messages[state.messages.length - 1].content}</p>
                     {state.messages[state.messages.length - 1].urdu && (
-                      <p className="font-urdu text-primary text-center text-lg" dir="rtl">{state.messages[state.messages.length - 1].urdu}</p>
+                      <p className="font-urdu text-[#059669] text-2xl leading-relaxed" dir="rtl">{state.messages[state.messages.length - 1].urdu}</p>
                     )}
                   </div>
                 </motion.div>
@@ -620,19 +621,19 @@ function InterviewPageContent() {
             <VoiceOrb isSpeaking={state.isSpeaking} isListening={state.isListening} isProcessing={state.isLoading} onStartListening={startListening} onStopListening={stopListening} disabled={state.isLoading || state.isSpeaking} />
 
             {state.voiceError && (
-              <div className="mt-4 max-w-md rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm text-red-700">{state.voiceError}</div>
+              <div className="mt-6 max-w-md rounded-xl border border-[#EF4444]/20 bg-[#EF4444]/10 px-4 py-3 text-center text-sm font-bold text-[#EF4444]">{state.voiceError}</div>
             )}
 
             {state.inputValue && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 w-full max-w-md">
-                <div className="bg-white/80 rounded-xl p-4 border border-slate-200 shadow-sm">
-                  <p className="text-slate-600 text-center">{state.inputValue}</p>
-                  <div className="flex justify-center gap-2 mt-3">
-                    <button onClick={() => setState((prev) => ({ ...prev, inputValue: '' }))} className="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-1">
-                      <X className="w-4 h-4" /> Clear
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8 w-full max-w-lg">
+                <div className="bg-surface rounded-2xl p-5 border border-border shadow-sm">
+                  <p className="text-foreground text-center text-lg">{state.inputValue}</p>
+                  <div className="flex justify-center gap-3 mt-4">
+                    <button onClick={() => setState((prev) => ({ ...prev, inputValue: '' }))} className="btn-ghost py-2 text-sm">
+                      <X className="w-4 h-4 mr-1" /> Clear
                     </button>
-                    <button onClick={() => handleSendMessage()} className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-1">
-                      <Send className="w-4 h-4" /> Send
+                    <button onClick={() => handleSendMessage()} className="btn-primary py-2 px-6 text-sm">
+                      <Send className="w-4 h-4 mr-2" /> Transmit
                     </button>
                   </div>
                 </div>
@@ -641,68 +642,74 @@ function InterviewPageContent() {
           </main>
         </div>
 
-        <button onClick={() => setState((prev) => ({ ...prev, showVoiceSidebar: !prev.showVoiceSidebar }))} className={`fixed right-0 top-1/2 -translate-y-1/2 z-50 p-2 bg-white shadow-lg rounded-l-lg border border-r-0 border-slate-200 transition-all ${state.showVoiceSidebar ? 'mr-80' : 'mr-0'}`}>
-          <ChevronLeft className={`w-5 h-5 text-slate-600 transition-transform ${state.showVoiceSidebar ? '' : 'rotate-180'}`} />
+        <button onClick={() => setState((prev) => ({ ...prev, showVoiceSidebar: !prev.showVoiceSidebar }))} className={`fixed right-0 top-1/2 -translate-y-1/2 z-50 p-3 bg-surface shadow-lg rounded-l-2xl border border-r-0 border-border transition-all ${state.showVoiceSidebar ? 'mr-80' : 'mr-0'}`}>
+          <ChevronLeft className={`w-5 h-5 text-foreground transition-transform ${state.showVoiceSidebar ? '' : 'rotate-180'}`} />
         </button>
 
         <AnimatePresence>
           {state.showVoiceSidebar && (
-            <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 320, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="bg-white/90 backdrop-blur-sm border-l border-slate-200 overflow-hidden flex-shrink-0">
-              <div className="w-80 p-4 h-full overflow-y-auto">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-slate-700 font-semibold">Analysis Progress</h2>
-                  <button onClick={() => setState((prev) => ({ ...prev, showVoiceSidebar: false }))} className="p-1 text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
+            <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 320, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="bg-surface/90 backdrop-blur-xl border-l border-border overflow-hidden flex-shrink-0 z-40 relative">
+              <div className="w-80 p-6 h-full overflow-y-auto">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="font-bold text-foreground tracking-tight">Clinical Telemetry</h2>
+                  <button onClick={() => setState((prev) => ({ ...prev, showVoiceSidebar: false }))} className="p-1 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
                 </div>
-                <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
+                
+                <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2"><Brain className="w-5 h-5 text-primary" /><span className="text-slate-600 text-sm font-medium">Confidence</span></div>
-                    <span className={`text-lg font-bold ${getConfidenceColor(state.diagnosisProgress.confidence)}`}>{state.diagnosisProgress.confidence}%</span>
+                    <div className="flex items-center gap-2"><Brain className="w-4 h-4 text-[#059669]" /><span className="text-foreground text-sm font-bold">Diagnostic Confidence</span></div>
+                    <span className={`text-lg font-bold font-mono-data ${getConfidenceColor(state.diagnosisProgress.confidence)}`}>{state.diagnosisProgress.confidence}%</span>
                   </div>
-                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <motion.div initial={{ width: 0 }} animate={{ width: `${state.diagnosisProgress.confidence}%` }} className="h-full bg-gradient-to-r from-primary to-secondary" />
+                  <div className="h-2 bg-[rgba(15,17,23,0.06)] rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${state.diagnosisProgress.confidence}%` }} className="h-full bg-[#059669]" />
                   </div>
                 </div>
+
                 {(state.isLoading || state.currentThinkingSteps.length > 0) && (
-                  <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
-                    <h3 className="text-sm font-medium text-slate-600 mb-3">{state.isLoading ? 'Agent Reasoning' : 'Last Analysis'}</h3>
+                  <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
+                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">{state.isLoading ? 'Agent Reasoning' : 'Last Analysis'}</h3>
                     <ThinkingActivity isThinking={state.isLoading} steps={state.currentThinkingSteps} />
                   </div>
                 )}
+                
                 {state.messages.length > 0 && state.messages[state.messages.length - 1].thinkingSteps && (
-                  <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
-                    <h3 className="text-sm font-medium text-slate-600 mb-3">Previous Reasoning</h3>
+                  <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
+                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Previous Reasoning</h3>
                     <ThinkingActivity isThinking={false} steps={state.messages[state.messages.length - 1].thinkingSteps!} duration={state.messages[state.messages.length - 1].thinkingDuration} />
                   </div>
                 )}
+                
                 <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
-                    <div className="flex items-center justify-center gap-1 text-slate-400 text-xs mb-1"><Sparkles className="w-3 h-3" /> Symptoms</div>
-                    <p className="text-xl font-bold text-slate-700">{state.diagnosisProgress.symptomsIdentified}</p>
+                  <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-4 text-center border border-border">
+                    <div className="flex items-center justify-center gap-1 text-muted-foreground text-xs font-bold uppercase mb-2"><Sparkles className="w-3 h-3" /> Vectors</div>
+                    <p className="text-2xl font-bold text-foreground font-mono-data">{state.diagnosisProgress.symptomsIdentified}</p>
                   </div>
-                  <div className="bg-slate-50 rounded-xl p-3 text-center border border-slate-100">
-                    <div className="flex items-center justify-center gap-1 text-slate-400 text-xs mb-1"><MessageSquare className="w-3 h-3" /> Questions</div>
-                    <p className="text-xl font-bold text-slate-700">{state.sessionInfo?.conversationTurn || 0}</p>
+                  <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-4 text-center border border-border">
+                    <div className="flex items-center justify-center gap-1 text-muted-foreground text-xs font-bold uppercase mb-2"><MessageSquare className="w-3 h-3" /> Turns</div>
+                    <p className="text-2xl font-bold text-foreground font-mono-data">{state.sessionInfo?.conversationTurn || 0}</p>
                   </div>
                 </div>
+
                 {state.diagnosisProgress.topConditions.length > 0 && (
-                  <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
-                    <h3 className="text-sm font-medium text-slate-600 mb-3">Top Conditions</h3>
-                    <div className="space-y-2">
+                  <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
+                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Top Vectors</h3>
+                    <div className="space-y-3">
                       {state.diagnosisProgress.topConditions.map((condition, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                          <span className="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs">{i + 1}</span>
+                        <div key={i} className="flex items-center gap-3 text-sm text-foreground font-medium">
+                          <span className="w-6 h-6 bg-[#059669]/10 text-[#059669] rounded-full flex items-center justify-center text-xs font-mono-data font-bold">{i + 1}</span>
                           {condition}
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
-                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                  <h3 className="text-sm font-medium text-slate-600 mb-3">Session Info</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-slate-400">Duration</span><span className="text-slate-700">{formatTime(state.sessionTime)}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-400">Mode</span><span className="text-slate-700">Voice</span></div>
-                    <div className="flex justify-between"><span className="text-slate-400">Status</span>{state.sessionInfo?.severity && getSeverityBadge(state.sessionInfo.severity)}</div>
+
+                <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 border border-border">
+                  <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">Session Info</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between items-center"><span className="text-muted-foreground font-medium">Duration</span><span className="text-foreground font-mono-data font-bold">{formatTime(state.sessionTime)}</span></div>
+                    <div className="flex justify-between items-center"><span className="text-muted-foreground font-medium">Mode</span><span className="text-foreground font-bold">Voice UI</span></div>
+                    <div className="flex justify-between items-center"><span className="text-muted-foreground font-medium">Status</span>{state.sessionInfo?.severity && getSeverityBadge(state.sessionInfo.severity)}</div>
                   </div>
                 </div>
               </div>
@@ -717,57 +724,59 @@ function InterviewPageContent() {
 
   // Text Mode UI
   return (
-    <div className="min-h-screen flex bg-[var(--background)] bg-[url('/images/noise.png')] bg-blend-multiply">
+    <div className="min-h-screen flex bg-background">
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        <header className="bg-[var(--primary)] border-b border-[var(--secondary)]/30 z-40 shadow-xl flex-shrink-0 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('/images/noise.png')]" />
-          <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between relative z-10">
+        <header className="bg-surface/80 backdrop-blur-xl border-b border-border z-40 shadow-sm flex-shrink-0 relative">
+          <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between relative z-10">
             <div className="flex items-center gap-4">
               <Link href="/patient/dashboard">
-                <button className="p-2 rounded-xl hover:bg-white/10 transition-colors">
-                  <ChevronLeft className="w-5 h-5 text-[var(--secondary)]" />
+                <button className="p-2 rounded-xl hover:bg-[rgba(15,17,23,0.04)] border border-transparent hover:border-border transition-colors">
+                  <ChevronLeft className="w-5 h-5 text-foreground" />
                 </button>
               </Link>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm overflow-hidden border border-[var(--secondary)]/30 bg-[var(--background)]">
-                  <Image src="/images/avatar_hakim.png" alt="Hakim AI" width={40} height={40} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm overflow-hidden border border-[rgba(15,17,23,0.06)] bg-surface">
+                  <Image src="/images/nuskha_logo.png" alt="Nuskha AI" width={40} height={40} className="object-cover" />
                 </div>
                 <div>
-                  <h1 className="font-serif text-lg font-bold text-[var(--background)] flex items-center gap-2">
-                    Hakim AI <CheckCircle className="w-4 h-4 text-[var(--secondary)]" />
+                  <h1 className="text-lg font-bold text-foreground flex items-center gap-2 tracking-tight">
+                    Nuskha Clinical AI <CheckCircle className="w-4 h-4 text-[#059669]" />
                   </h1>
-                  <p className="text-xs text-[var(--secondary)] font-serif italic">AI Medieval Healer</p>
+                  <p className="text-xs text-muted-foreground font-mono-data">Encrypted Session</p>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 relative z-10">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/20 rounded-lg shadow-sm border border-[var(--secondary)]/20">
-                <Clock className="w-4 h-4 text-[var(--secondary)]" />
-                <span className="text-sm font-medium text-[var(--secondary)]">{formatTime(state.sessionTime)}</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-[rgba(15,17,23,0.04)] border border-border rounded-lg shadow-sm">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-bold font-mono-data text-foreground">{formatTime(state.sessionTime)}</span>
               </div>
-              <button onClick={() => setState((prev) => ({ ...prev, showEndDialog: true }))} className="px-4 py-1.5 text-sm font-serif font-medium text-[var(--background)] border border-[var(--secondary)] rounded-full hover:bg-[var(--secondary)]/20 transition-colors">
+              <button onClick={() => setState((prev) => ({ ...prev, showEndDialog: true }))} className="btn-ghost text-[#EF4444] hover:bg-[#EF4444]/10 border border-transparent hover:border-[#EF4444]/20">
                 End Session
               </button>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+        <main className="flex-1 overflow-y-auto bg-[url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80')] bg-cover bg-center bg-fixed">
+          {/* Blend overlay to keep it readable */}
+          <div className="absolute inset-0 bg-background/95 backdrop-blur-3xl pointer-events-none" />
+          
+          <div className="max-w-4xl mx-auto px-4 py-8 space-y-8 relative z-10">
             <AnimatePresence>
               {state.messages.map((message) => (
                 <motion.div key={message.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {message.role === 'assistant' ? (
-                    <div className="flex gap-3 max-w-[85%]">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden border border-[var(--secondary)]/30 mt-1">
-                        <Image src="/images/avatar_hakim.png" alt="AI" width={40} height={40} />
+                    <div className="flex gap-4 max-w-[85%]">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden border border-border bg-surface mt-1">
+                        <Image src="/images/nuskha_logo.png" alt="AI" width={40} height={40} className="object-cover" />
                       </div>
-                      <div className="flex-1 bg-white/60 backdrop-blur-md rounded-2xl rounded-tl-none p-5 shadow-sm border border-[var(--secondary)]/20 font-serif">
+                      <div className="flex-1 card-surface rounded-2xl rounded-tl-none p-6 shadow-sm border border-border">
                         {message.thinkingSteps && message.thinkingSteps.length > 0 && (
                           <ThinkingActivity isThinking={false} steps={message.thinkingSteps} duration={message.thinkingDuration} />
                         )}
-                        {message.severity && message.severity !== 'normal' && <div className="mb-2">{getSeverityBadge(message.severity)}</div>}
-                        <div className="text-slate-700">
+                        {message.severity && message.severity !== 'normal' && <div className="mb-4">{getSeverityBadge(message.severity)}</div>}
+                        <div className="text-foreground text-lg leading-relaxed">
                           {message.isTyping ? (
                             <TypingText text={message.content} speed={15} onComplete={() => handleTypingComplete(message.id)} />
                           ) : (
@@ -775,28 +784,28 @@ function InterviewPageContent() {
                           )}
                         </div>
                         {message.urdu && !message.isTyping && (
-                          <div className="mt-3 pt-3 border-t border-slate-200">
-                            <p className="font-urdu text-primary text-right" dir="rtl">{message.urdu}</p>
+                          <div className="mt-4 pt-4 border-t border-border">
+                            <p className="font-urdu text-[#059669] text-right text-lg" dir="rtl">{message.urdu}</p>
                             {mode === 'text' && (
-                              <button onClick={() => speakText(message.urdu!)} disabled={state.isSpeaking} className="mt-2 flex items-center gap-1 text-xs text-slate-400 hover:text-primary transition-colors">
-                                {state.isSpeaking ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
+                              <button onClick={() => speakText(message.urdu!)} disabled={state.isSpeaking} className="mt-3 flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-[#059669] transition-colors">
+                                {state.isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                                 Listen in Urdu
                               </button>
                             )}
                           </div>
                         )}
                         {message.confidenceLevel !== undefined && (
-                          <div className="mt-2 flex items-center gap-4 text-xs text-slate-400">
-                            <span className={`flex items-center gap-1 ${getConfidenceColor(message.confidenceLevel)}`}>
-                              <Brain className="w-3 h-3" /> {message.confidenceLevel}% confident
+                          <div className="mt-4 flex items-center gap-4 text-xs font-bold text-muted-foreground">
+                            <span className={`flex items-center gap-1 font-mono-data ${getConfidenceColor(message.confidenceLevel)}`}>
+                              <Brain className="w-4 h-4" /> {message.confidenceLevel}% Confident
                             </span>
                           </div>
                         )}
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-[var(--primary)] rounded-2xl rounded-tr-none px-5 py-4 max-w-[70%] shadow-md border border-[var(--primary)] font-serif">
-                      <p className="text-[var(--background)] leading-relaxed">{message.content}</p>
+                    <div className="bg-[#0F1117] rounded-2xl rounded-tr-none px-6 py-4 max-w-[70%] shadow-md border border-[rgba(255,255,255,0.1)]">
+                      <p className="text-white text-lg leading-relaxed">{message.content}</p>
                     </div>
                   )}
                 </motion.div>
@@ -804,11 +813,11 @@ function InterviewPageContent() {
             </AnimatePresence>
 
             {state.isLoading && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
-                  <Image src="/logo/shifa-favicon.svg" alt="AI" width={32} height={32} />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden border border-border bg-surface">
+                  <Image src="/images/nuskha_logo.png" alt="AI" width={40} height={40} className="object-cover" />
                 </div>
-                <div className="flex-1 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-100">
+                <div className="flex-1 card-surface rounded-2xl p-5 shadow-sm border border-border max-w-[85%]">
                   <ThinkingActivity isThinking={true} steps={state.currentThinkingSteps} />
                 </div>
               </motion.div>
@@ -818,22 +827,22 @@ function InterviewPageContent() {
           </div>
         </main>
 
-        <div className="border-t border-[var(--secondary)]/20 bg-white/40 backdrop-blur-xl p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] flex-shrink-0">
-          <div className="max-w-3xl mx-auto">
-            <div className="relative">
+        <div className="border-t border-border bg-surface/80 backdrop-blur-xl p-6 flex-shrink-0 z-20 shadow-[0_-4px_24px_rgba(15,17,23,0.04)]">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative flex items-center">
               <input
                 type="text"
                 value={state.inputValue}
                 onChange={(e) => setState((prev) => ({ ...prev, inputValue: e.target.value }))}
                 onKeyDown={(e) => e.key === 'Enter' && !state.isLoading && handleSendMessage()}
-                placeholder="Ask anything about your health..."
+                placeholder="Describe your symptoms in detail..."
                 disabled={state.isLoading}
-                className="w-full px-6 py-4 pr-14 bg-white border border-[var(--secondary)]/30 rounded-full text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 font-serif shadow-sm disabled:opacity-50"
+                className="w-full pl-6 pr-16 py-4 bg-[rgba(15,17,23,0.02)] border border-border rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-4 focus:ring-[#059669]/10 focus:border-[#059669] transition-all shadow-sm disabled:opacity-50 text-lg"
               />
               <button
                 onClick={() => handleSendMessage()}
                 disabled={!state.inputValue.trim() || state.isLoading}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-[var(--primary)] text-[var(--background)] rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--primary)]/90 transition-transform hover:scale-105 active:scale-95 shadow-md"
+                className="absolute right-3 p-3 bg-[#059669] text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#047857] transition-transform hover:scale-105 active:scale-95 shadow-sm"
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -844,53 +853,52 @@ function InterviewPageContent() {
 
       <AnimatePresence>
         {state.showActivityPanel && (
-          <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 320, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="bg-white/90 backdrop-blur-sm border-l border-slate-200 overflow-hidden">
-            <div className="p-4 h-full overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-slate-700 font-semibold">Activity</h2>
-                <button onClick={() => setState((prev) => ({ ...prev, showActivityPanel: false }))} className="p-1 text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
+          <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 340, opacity: 1 }} exit={{ width: 0, opacity: 0 }} className="bg-surface border-l border-border overflow-hidden z-30 shadow-2xl relative">
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-bold text-foreground tracking-tight">Real-Time Telemetry</h2>
+                <button onClick={() => setState((prev) => ({ ...prev, showActivityPanel: false }))} className="p-1 text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
               </div>
-              <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
-                <h3 className="text-sm font-medium text-slate-600 mb-3">Diagnosis Progress</h3>
-                <div className="space-y-3">
+              <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
+                <h3 className="eyebrow mb-4">Diagnostic Progress</h3>
+                <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-slate-400">Confidence</span>
-                    <span className={`font-bold ${getConfidenceColor(state.diagnosisProgress.confidence)}`}>{state.diagnosisProgress.confidence}%</span>
+                    <span className="text-sm font-bold text-muted-foreground">Confidence</span>
+                    <span className={`font-mono-data font-bold text-lg ${getConfidenceColor(state.diagnosisProgress.confidence)}`}>{state.diagnosisProgress.confidence}%</span>
                   </div>
-                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <motion.div initial={{ width: 0 }} animate={{ width: `${state.diagnosisProgress.confidence}%` }} className="h-full bg-gradient-to-r from-primary to-secondary" />
+                  <div className="h-2 bg-[rgba(15,17,23,0.06)] rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${state.diagnosisProgress.confidence}%` }} className="h-full bg-[#059669]" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2 mt-3">
-                    <div className="bg-white rounded-lg p-2 text-center border border-slate-100">
-                      <p className="text-xs text-slate-400">Symptoms</p>
-                      <p className="text-lg font-bold text-slate-700">{state.diagnosisProgress.symptomsIdentified}</p>
+                  <div className="grid grid-cols-2 gap-3 mt-4">
+                    <div className="bg-surface rounded-xl p-3 text-center border border-border shadow-sm">
+                      <p className="eyebrow mb-1">Vectors</p>
+                      <p className="text-2xl font-bold font-mono-data text-foreground">{state.diagnosisProgress.symptomsIdentified}</p>
                     </div>
-                    <div className="bg-white rounded-lg p-2 text-center border border-slate-100">
-                      <p className="text-xs text-slate-400">Questions</p>
-                      <p className="text-lg font-bold text-slate-700">{state.sessionInfo?.conversationTurn || 0}</p>
+                    <div className="bg-surface rounded-xl p-3 text-center border border-border shadow-sm">
+                      <p className="eyebrow mb-1">Turns</p>
+                      <p className="text-2xl font-bold font-mono-data text-foreground">{state.sessionInfo?.conversationTurn || 0}</p>
                     </div>
                   </div>
                 </div>
               </div>
               {state.diagnosisProgress.topConditions.length > 0 && (
-                <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-slate-100">
-                  <h3 className="text-sm font-medium text-slate-600 mb-3">Top Conditions</h3>
-                  <div className="space-y-2">
+                <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
+                  <h3 className="eyebrow mb-4">Top Vectors</h3>
+                  <div className="space-y-3">
                     {state.diagnosisProgress.topConditions.map((condition, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                        <span className="w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs">{i + 1}</span>
+                      <div key={i} className="flex items-center gap-3 text-sm font-medium text-foreground">
+                        <span className="w-6 h-6 bg-[#059669]/10 text-[#059669] font-mono-data font-bold rounded-full flex items-center justify-center text-xs">{i + 1}</span>
                         {condition}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <h3 className="text-sm font-medium text-slate-600 mb-3">Session Info</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-slate-400">Duration</span><span className="text-slate-700">{formatTime(state.sessionTime)}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-400">Questions</span><span className="text-slate-700">{state.sessionInfo?.conversationTurn || 0}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-400">Status</span>{state.sessionInfo?.severity && getSeverityBadge(state.sessionInfo.severity)}</div>
+              <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 border border-border">
+                <h3 className="eyebrow mb-4">Session Context</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center"><span className="font-bold text-muted-foreground">Duration</span><span className="font-bold font-mono-data text-foreground">{formatTime(state.sessionTime)}</span></div>
+                  <div className="flex justify-between items-center"><span className="font-bold text-muted-foreground">Status</span>{state.sessionInfo?.severity && getSeverityBadge(state.sessionInfo.severity)}</div>
                 </div>
               </div>
             </div>
@@ -900,33 +908,33 @@ function InterviewPageContent() {
 
       <AnimatePresence>
         {state.showEndDialog && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-2xl p-6 max-w-md w-full border border-slate-200 shadow-xl">
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-7 h-7 text-primary" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="card-surface p-8 max-w-md w-full">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-[#EF4444]/10 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-[#EF4444]/20">
+                  <FileText className="w-8 h-8 text-[#EF4444]" />
                 </div>
-                <h2 className="text-xl font-bold text-slate-800 mb-1">End Session?</h2>
-                <p className="font-urdu text-primary">&#1603;&#1610;&#1575; &#1570;&#1608;&#1575;&#1585; &#1587;&#1610;&#1588;&#1606; &#1582;&#1578;&#1605; &#1603;&#1585;&#1606;&#1575; &#1608;&#1583;&#1575;&#1583;&#1587;&#1578;&#1607; &#1581;&#1578;&#1605;&#1610; &#1607;&#1610;&#1606; &#1602;&#1575;&#1574;&#1610;&#1610;&#1575;&#1576;&#1575;&#1606;&#1567;</p>
+                <h2 className="text-2xl font-bold text-foreground mb-2 tracking-tight">Finalize Assessment?</h2>
+                <p className="font-urdu text-muted-foreground">&#1603;&#1610;&#1575; &#1570;&#1608;&#1575;&#1585; &#1587;&#1610;&#1588;&#1606; &#1582;&#1578;&#1605; &#1603;&#1585;&#1606;&#1575; &#1608;&#1583;&#1575;&#1583;&#1587;&#1578;&#1607; &#1581;&#1578;&#1605;&#1610; &#1607;&#1610;&#1606; &#1602;&#1575;&#1574;&#1610;&#1610;&#1575;&#1576;&#1575;&#1606;&#1567;</p>
               </div>
-              <div className="bg-slate-50 rounded-xl p-4 mb-4 space-y-2 text-sm border border-slate-100">
-                <div className="flex justify-between"><span className="text-slate-400">Duration</span><span className="text-slate-700">{formatTime(state.sessionTime)}</span></div>
-                <div className="flex justify-between"><span className="text-slate-400">Confidence</span><span className={getConfidenceColor(state.diagnosisProgress.confidence)}>{state.diagnosisProgress.confidence}%</span></div>
+              <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-6 space-y-3 border border-border text-sm">
+                <div className="flex justify-between items-center"><span className="font-bold text-muted-foreground">Session Duration</span><span className="font-mono-data font-bold text-foreground">{formatTime(state.sessionTime)}</span></div>
+                <div className="flex justify-between items-center"><span className="font-bold text-muted-foreground">Data Confidence</span><span className={`font-mono-data font-bold ${getConfidenceColor(state.diagnosisProgress.confidence)}`}>{state.diagnosisProgress.confidence}%</span></div>
               </div>
               {state.diagnosisProgress.confidence < 50 && (
-                <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl mb-4 text-yellow-700 text-sm">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
-                  Low confidence. Consider providing more details.
+                <div className="flex items-center gap-3 p-4 bg-[#F59E0B]/10 border border-[#F59E0B]/20 rounded-xl mb-6 text-[#F59E0B] text-sm font-bold">
+                  <AlertTriangle className="w-5 h-5 shrink-0" />
+                  Confidence is low. Consider providing more detail before generating the report.
                 </div>
               )}
-              <div className="flex gap-3">
-                <Button onClick={() => setState((prev) => ({ ...prev, showEndDialog: false }))} variant="outline" className="flex-1 border-slate-200 text-slate-600 hover:bg-slate-50">
-                  Continue
-                </Button>
-                <Button onClick={generateReport} className="flex-1 bg-primary hover:bg-primary/90 text-white" disabled={state.isGeneratingReport}>
+              <div className="flex gap-4">
+                <button onClick={() => setState((prev) => ({ ...prev, showEndDialog: false }))} className="btn-ghost flex-1 justify-center">
+                  Continue Chat
+                </button>
+                <button onClick={generateReport} className="btn-primary flex-1 justify-center" disabled={state.isGeneratingReport}>
                   {state.isGeneratingReport ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <CheckCircle className="w-4 h-4 mr-2" />}
                   Generate Report
-                </Button>
+                </button>
               </div>
             </motion.div>
           </motion.div>
@@ -942,8 +950,8 @@ export default function InterviewPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#f2f1f3', backgroundImage: HEXAGON_BG }}>
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <Loader2 className="w-8 h-8 border-4 text-[#059669] animate-spin" />
         </div>
       }
     >

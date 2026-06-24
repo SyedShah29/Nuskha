@@ -45,26 +45,26 @@ export default function MedicalSessionPage() {
 
   if (loading || medicalHistoryLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500">
-        <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-12 h-12 border-4 border-border border-t-[#059669] rounded-full animate-spin" />
       </div>
     );
   }
 
   if (roleConflict) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 p-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-8 h-8 text-red-500" />
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <div className="card-surface p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-[#EF4444]/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-8 h-8 text-[#EF4444]" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Account Already Registered</h2>
-          <p className="text-gray-600 mb-6">This email is registered as a <strong>doctor</strong> account.</p>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight mb-4">Account Already Registered</h2>
+          <p className="text-muted-foreground mb-6">This email is registered as a <strong>doctor</strong> account.</p>
           <div className="flex flex-col gap-3">
-            <Button onClick={() => router.push('/doctor/dashboard')} className="w-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-xl font-semibold">
+            <Button onClick={() => router.push('/doctor/dashboard')} className="w-full btn-primary py-6">
               Go to Provider Portal
             </Button>
-            <Button onClick={async () => { await authClient.signOut(); router.push('/login'); }} variant="outline" className="w-full rounded-xl">
+            <Button onClick={async () => { await authClient.signOut(); router.push('/login'); }} className="w-full btn-ghost">
               Sign Out & Use Different Email
             </Button>
           </div>
@@ -83,8 +83,8 @@ export default function MedicalSessionPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500">
-      <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="w-12 h-12 border-4 border-border border-t-[#059669] rounded-full animate-spin" />
     </div>
   );
 }

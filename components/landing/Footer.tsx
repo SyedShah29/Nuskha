@@ -1,115 +1,63 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Github, Linkedin, Twitter } from "lucide-react";
+
+const footerLinks = {
+  Product: ["Features", "For Patients", "For Doctors", "Pricing"],
+  Company: ["About Us", "Careers", "Press", "Contact"],
+  Legal: ["Privacy Policy", "Terms of Service", "HIPAA Compliance"],
+};
 
 export const Footer = () => {
-  const footerLinks = {
-    product: [
-      { name: "Features", href: "#features" },
-      { name: "How it Works", href: "#how-it-works" },
-      { name: "For Patients", href: "/signup?type=patient" },
-      { name: "For Doctors", href: "/signup?type=doctor" },
-    ],
-    legal: [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-      { name: "HIPAA Compliance", href: "/hipaa" },
-    ],
-  };
-
   return (
-    <footer className="relative bg-gray-950 text-white overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/images/noise.png')] bg-blend-overlay opacity-[0.02]" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
-
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="py-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 border-b border-white/10">
-          <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <Image
-                  src="/logo/shifa-logo.svg"
-                  alt="Shifa"
-                  width={24}
-                  height={24}
-                  className="brightness-0 invert"
-                />
+    <footer className="bg-white border-t border-[rgba(15,17,23,0.04)] pt-20 pb-10">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+          
+          <div className="lg:col-span-2">
+            <Link href="/" className="flex items-center gap-2.5 mb-6">
+              <div className="w-8 h-8 rounded-xl bg-[#0F1117] flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 12 Q12 4 21 12" stroke="#059669" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M4 12 L7 12 L8.5 8 L10 16 L11.5 12 L20 12" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="3" cy="12" r="1.2" fill="#059669"/>
+                </svg>
               </div>
-              <span className="text-xl font-bold">Shifa</span>
+              <span className="font-bold text-[#0F1117]">Nuskha</span>
             </Link>
-            <p className="text-white/50 mb-6 max-w-sm leading-relaxed text-sm">
-              Bridging the healthcare gap through autonomous AI clinical
-              consultations. Professional, rigorous healthcare accessible to
-              everyone.
+            <p className="text-[#6B7280] text-sm leading-relaxed max-w-xs mb-8">
+              Pakistan's first multi-agent clinical assistant, bridging the gap between symptoms and professional care in both Urdu and English.
             </p>
-            <div className="flex gap-3">
-              {[
-                { icon: Twitter, label: "Twitter" },
-                { icon: Linkedin, label: "LinkedIn" },
-                { icon: Github, label: "GitHub" },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href="#"
-                  aria-label={social.label}
-                  className="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center transition-all border border-white/10 hover:border-white/20"
-                >
-                  <social.icon className="w-4 h-4 text-white/60" />
-                </a>
+            <div className="flex gap-4">
+              {/* Social icons placeholders */}
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="w-10 h-10 rounded-full border border-[rgba(15,17,23,0.08)] flex items-center justify-center hover:bg-[#F6F7F9] transition-colors cursor-pointer" />
               ))}
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6">
-              Product
-            </h3>
-            <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-white/50 hover:text-white transition-colors text-sm flex items-center gap-2 group"
-                  >
-                    <span className="w-0 h-px bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all group-hover:w-3" />
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {Object.entries(footerLinks).map(([category, links]) => (
+            <div key={category}>
+              <h4 className="font-bold text-[#0F1117] mb-6">{category}</h4>
+              <ul className="flex flex-col gap-4">
+                {links.map((link) => (
+                  <li key={link}>
+                    <Link href="#" className="text-sm text-[#6B7280] hover:text-[#059669] transition-colors">
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
-          <div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-6">
-              Legal
-            </h3>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-white/50 hover:text-white transition-colors text-sm flex items-center gap-2 group"
-                  >
-                    <span className="w-0 h-px bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all group-hover:w-3" />
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        <div className="py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/30 text-sm">
-            &copy; 2026 Shifa. All rights reserved.
+        <div className="pt-8 border-t border-[rgba(15,17,23,0.04)] flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-[#6B7280]">
+            © {new Date().getFullYear()} Nuskha Health. All rights reserved.
           </p>
-          <div className="flex items-center gap-6 text-sm text-white/30">
-            <Link href="/privacy" className="hover:text-white/60 transition-colors">
-              Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-white/60 transition-colors">
-              Terms
-            </Link>
+          <div className="flex gap-6 text-sm text-[#6B7280] font-mono-data">
+            <span>Rescue: 1122</span>
+            <span>Edhi: 115</span>
           </div>
         </div>
       </div>

@@ -1,18 +1,18 @@
 {
-  "name": "Sehat Guftagu",
-  "short_name": "Sehat Guftagu",
-  "description": "AI-powered clinical interview system for Pakistani patients — bilingual, voice-enabled medical assessment",
+  "name": "Nuskha | AI Healthcare",
+  "short_name": "Nuskha",
+  "description": "Pakistan's first AI clinical assistant — describe symptoms in Urdu or English, get a SOAP report, and connect with a verified doctor.",
   "start_url": "/patient/dashboard",
   "display": "standalone",
-  "background_color": "#f2f1f3",
-  "theme_color": "#2c4d7b",
+  "background_color": "#030210",
+  "theme_color": "#6366f1",
   "orientation": "portrait-primary",
   "lang": "ur-PK",
   "dir": "rtl",
   "categories": ["health", "medical"],
   "icons": [
     {
-      "src": "/logo/sehat-guftagu-logo.svg",
+      "src": "/logo/nuskha-favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

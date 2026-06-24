@@ -147,9 +147,9 @@ export default function DoctorDashboard() {
 
   const getUrgencyColor = (urgency: string) => {
     switch (urgency) {
-      case 'high': return 'bg-red-100 text-red-700 border border-red-200';
-      case 'medium': return 'bg-amber-100 text-amber-700 border border-amber-200';
-      default: return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+      case 'high': return 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/20';
+      case 'medium': return 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20';
+      default: return 'bg-[#059669]/10 text-[#059669] border-[#059669]/20';
     }
   };
 
@@ -168,100 +168,35 @@ export default function DoctorDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
-        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50/50 via-white to-cyan-50/50">
+    <div className="min-h-screen bg-background">
       <DashboardNavbar
         user={user ? { ...user, name: `Dr. ${user.name?.split(' ')[0] || 'Doctor'}` } : null}
-        brandName="Shifa"
+        brandName="Nuskha"
         searchPlaceholder="Search patients or complaints..."
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         profileHref="/doctor/profile"
-        extraInfo={doctorProfile?.specialization && <p className="text-xs text-indigo-500 mt-1 font-medium">{doctorProfile.specialization}</p>}
+        extraInfo={doctorProfile?.specialization && <p className="text-xs text-muted-foreground mt-1 font-mono-data font-bold">{doctorProfile.specialization}</p>}
         dashboardHref="/doctor/dashboard"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Welcome, <span className="bg-gradient-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent">Dr. {user?.name?.split(' ')[0] || 'Doctor'}</span>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            Welcome, Dr. {user?.name?.split(' ')[0] || 'Doctor'}
           </h1>
-          <p className="text-gray-500 mt-1">Review patient reports and provide care</p>
+          <p className="text-muted-foreground text-lg mt-3">Review patient reports and provide care</p>
         </motion.div>
 
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex-1" />
-          <div className="relative">
-            <Button variant="outline" className="rounded-xl px-4 py-2 border-gray-200" onClick={() => setShowFilters(!showFilters)}>
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
-              {hasActiveFilters && <span className="ml-2 w-2 h-2 bg-indigo-500 rounded-full" />}
-            </Button>
-
-            <AnimatePresence>
-              {showFilters && (
-                <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.95 }} className="absolute right-0 top-full mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 z-50">
-                  <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-lg font-bold text-gray-800">Filter Reports</h3>
-                    <button onClick={() => setFilters({ dateRange: 'all', priority: 'all', department: 'all' })} className="text-sm text-indigo-600 hover:text-indigo-700 font-semibold">Clear All</button>
-                  </div>
-
-                  <div className="space-y-5">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">Department</label>
-                      <select value={filters.department} onChange={(e) => setFilters((prev) => ({ ...prev, department: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                        {getDepartmentFilterOptions().map((dept) => (
-                          <option key={dept.id} value={dept.id}>{dept.name}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">Date Range</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {[{ value: 'all', label: 'All Time' }, { value: 'today', label: 'Today' }, { value: 'week', label: 'This Week' }, { value: 'month', label: 'This Month' }].map((option) => (
-                          <button key={option.value} onClick={() => setFilters((prev) => ({ ...prev, dateRange: option.value }))} className={`p-3 rounded-xl text-sm font-semibold transition-all ${filters.dateRange === option.value ? 'bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}>
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-3">Priority Level</label>
-                      <div className="space-y-2">
-                        {[
-                          { value: 'all', label: 'All Priorities', color: 'bg-gray-50 text-gray-700' },
-                          { value: 'high', label: 'High Priority', color: 'bg-red-50 text-red-700 border border-red-200' },
-                          { value: 'medium', label: 'Medium Priority', color: 'bg-amber-50 text-amber-700 border border-amber-200' },
-                          { value: 'low', label: 'Low Priority', color: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
-                        ].map((option) => (
-                          <button key={option.value} onClick={() => setFilters((prev) => ({ ...prev, priority: option.value }))} className={`w-full p-3 rounded-xl text-sm font-semibold transition-all border ${filters.priority === option.value ? 'bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-lg shadow-indigo-500/20 border-transparent' : `${option.color} border-transparent hover:shadow-sm`}`}>
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 mt-6 pt-5 border-t border-gray-100">
-                    <Button onClick={() => setShowFilters(false)} className="flex-1 text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 rounded-xl py-3 font-semibold">Apply Filters</Button>
-                    <Button variant="outline" onClick={() => setShowFilters(false)} className="px-6 rounded-xl border-gray-200 hover:bg-gray-50">Cancel</Button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        <div className="mb-6 p-1 bg-gray-100 rounded-2xl max-w-lg">
-          <div className="flex">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div className="flex p-1.5 bg-[rgba(15,17,23,0.04)] rounded-full border border-border w-full sm:w-auto">
             {[
               { key: 'pending' as const, label: 'Pending', icon: Clock, count: stats.pending },
               { key: 'in-review' as const, label: 'In Review', icon: FileText, count: stats.inReview },
@@ -270,71 +205,136 @@ export default function DoctorDashboard() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold transition-all ${activeTab === tab.key ? 'bg-white text-indigo-600 shadow-md shadow-indigo-500/10' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-sm font-bold transition-all ${activeTab === tab.key ? 'bg-surface text-foreground shadow-sm border border-border' : 'text-muted-foreground hover:text-foreground border border-transparent'}`}
               >
-                <tab.icon className="w-4 h-4" />
+                <tab.icon className="w-4 h-4 hidden sm:block" />
                 {tab.label}
-                <span className={`ml-1 px-2 py-0.5 rounded-lg text-xs font-bold ${activeTab === tab.key ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-200 text-gray-500'}`}>
+                <span className={`ml-1 px-2 py-0.5 rounded-lg text-xs font-bold font-mono-data ${activeTab === tab.key ? 'bg-[#059669]/10 text-[#059669]' : 'bg-[rgba(15,17,23,0.06)] text-muted-foreground'}`}>
                   {dataLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : tab.count}
                 </span>
               </button>
             ))}
           </div>
+          
+          <div className="relative z-20">
+            <Button variant="outline" className="rounded-full px-5 py-2.5 bg-surface border-border text-foreground hover:bg-[rgba(15,17,23,0.02)]" onClick={() => setShowFilters(!showFilters)}>
+              <Filter className="w-4 h-4 mr-2" />
+              Filters
+              {hasActiveFilters && <span className="ml-2 w-2 h-2 bg-[#059669] rounded-full" />}
+            </Button>
+
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -10, scale: 0.95 }} className="absolute right-0 top-full mt-3 w-80 card-surface p-6 shadow-xl">
+                  <div className="flex items-center justify-between mb-5">
+                    <h3 className="font-bold text-foreground">Filter Reports</h3>
+                    <button onClick={() => setFilters({ dateRange: 'all', priority: 'all', department: 'all' })} className="text-sm font-bold text-muted-foreground hover:text-[#059669] transition-colors">Clear All</button>
+                  </div>
+
+                  <div className="space-y-5">
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">Department</label>
+                      <select value={filters.department} onChange={(e) => setFilters((prev) => ({ ...prev, department: e.target.value }))} className="w-full px-4 py-2.5 bg-[rgba(15,17,23,0.02)] border border-border rounded-xl text-foreground text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#059669]/20 focus:border-[#059669] transition-all">
+                        {getDepartmentFilterOptions().map((dept) => (
+                          <option key={dept.id} value={dept.id}>{dept.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">Date Range</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[{ value: 'all', label: 'All Time' }, { value: 'today', label: 'Today' }, { value: 'week', label: 'This Week' }, { value: 'month', label: 'This Month' }].map((option) => (
+                          <button key={option.value} onClick={() => setFilters((prev) => ({ ...prev, dateRange: option.value }))} className={`p-3 rounded-xl text-sm font-bold transition-all border ${filters.dateRange === option.value ? 'bg-[#059669] text-white border-[#059669]' : 'bg-[rgba(15,17,23,0.02)] text-muted-foreground border-border hover:border-foreground/20'}`}>
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">Priority Level</label>
+                      <div className="space-y-2">
+                        {[
+                          { value: 'all', label: 'All Priorities', color: 'bg-[rgba(15,17,23,0.02)] text-muted-foreground border-border' },
+                          { value: 'high', label: 'High Priority', color: 'bg-[#EF4444]/10 text-[#EF4444] border-[#EF4444]/20' },
+                          { value: 'medium', label: 'Medium Priority', color: 'bg-[#F59E0B]/10 text-[#F59E0B] border-[#F59E0B]/20' },
+                          { value: 'low', label: 'Low Priority', color: 'bg-[#059669]/10 text-[#059669] border-[#059669]/20' },
+                        ].map((option) => (
+                          <button key={option.value} onClick={() => setFilters((prev) => ({ ...prev, priority: option.value }))} className={`w-full p-3 rounded-xl text-sm font-bold transition-all border ${filters.priority === option.value ? 'bg-foreground text-background border-foreground shadow-sm' : `${option.color} hover:shadow-sm`}`}>
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 mt-6 pt-5 border-t border-border">
+                    <Button onClick={() => setShowFilters(false)} className="flex-1 btn-primary py-2.5">Apply Filters</Button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {dataLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AnimatePresence>
               {filteredReports.map((report) => {
                 const deptInfo = getDepartmentById(normalizeDepartmentId(report.department));
                 const DeptIcon = deptInfo.icon;
 
                 return (
-                  <motion.div key={report.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-cyan-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                          <User className="w-6 h-6 text-indigo-500" />
+                  <motion.div key={report.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="card-surface p-6 group hover:shadow-md transition-all border-border hover:border-[rgba(15,17,23,0.12)] relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-start justify-between mb-5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-surface border border-border rounded-xl flex items-center justify-center group-hover:bg-[#0F1117] group-hover:text-white transition-colors">
+                            <User className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-foreground text-lg tracking-tight">{report.patientName}</h3>
+                            <p className="text-sm text-muted-foreground font-mono-data">{report.age ? `${report.age} years old` : 'Age not specified'}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="font-bold text-gray-800">{report.patientName}</h3>
-                          <p className="text-sm text-gray-500">{report.age ? `${report.age} years old` : 'Age not specified'}</p>
+                        <div className="flex flex-col gap-2 items-end">
+                          <div className={`px-3 py-1 rounded-md text-xs font-bold font-mono-data uppercase tracking-wider border ${getUrgencyColor(report.urgency)}`}>{getUrgencyLabel(report.urgency)}</div>
+                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold font-mono-data uppercase bg-[rgba(15,17,23,0.04)] text-foreground border border-border">
+                            <DeptIcon className="w-3 h-3" />
+                            {deptInfo.name.split(' ')[0]}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-1.5 items-end">
-                        <div className={`px-3 py-1 rounded-xl text-xs font-bold ${getUrgencyColor(report.urgency)}`}>{getUrgencyLabel(report.urgency)}</div>
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200">
-                          <DeptIcon className="w-3 h-3" />
-                          {deptInfo.name.split(' ')[0]}
-                        </div>
+
+                      <div className="bg-[rgba(15,17,23,0.02)] rounded-xl p-4 border border-border mb-5">
+                        <p className="text-foreground text-sm leading-relaxed line-clamp-3">{report.complaint}</p>
                       </div>
+
+                      {report.redFlags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-5">
+                          {report.redFlags.map((flag, i) => (
+                            <span key={i} className="flex items-center gap-1.5 px-2.5 py-1 bg-[#EF4444]/10 text-[#EF4444] rounded-md text-xs font-bold font-mono-data border border-[#EF4444]/20">
+                              <AlertTriangle className="w-3 h-3" /> {flag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
-                    <p className="text-gray-600 mb-4">{report.complaint}</p>
-
-                    {report.redFlags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {report.redFlags.map((flag, i) => (
-                          <span key={i} className="flex items-center gap-1 px-2 py-1 bg-red-50 text-red-600 rounded-lg text-xs font-medium border border-red-100">
-                            <AlertTriangle className="w-3 h-3" /> {flag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <div className="flex items-center gap-2 text-gray-400 text-sm">
+                    <div className="flex items-center justify-between pt-5 border-t border-border mt-auto">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm font-mono-data font-bold">
                         <Clock className="w-4 h-4" />
                         {formatDate(report.timestamp)}
                       </div>
                       <Link href={`/doctor/report/${report.id}`}>
-                        <Button size="sm" className="rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all">
-                          Review <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
+                        <button className="btn-ghost text-sm px-4 py-2 hover:bg-[#059669] hover:text-white group/btn">
+                          Review Case <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
                       </Link>
                     </div>
                   </motion.div>
@@ -343,14 +343,19 @@ export default function DoctorDashboard() {
             </AnimatePresence>
 
             {filteredReports.length === 0 && (
-              <div className="col-span-2 bg-white rounded-2xl p-12 text-center border border-gray-100">
-                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-gray-400" />
+              <div className="col-span-full border-2 border-dashed border-border rounded-2xl p-16 text-center">
+                <div className="w-16 h-16 bg-surface border border-border rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <FileText className="w-8 h-8 text-muted-foreground opacity-50" />
                 </div>
-                <h3 className="font-bold text-gray-800 mb-2">No reports found</h3>
-                <p className="text-gray-500">
-                  {hasActiveFilters ? 'No reports match your current filters.' : `No ${activeTab} reports at the moment.`}
+                <h3 className="font-bold text-foreground text-xl mb-2 tracking-tight">No clinical reports found</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  {hasActiveFilters ? 'No reports match your current telemetry filters. Try adjusting your parameters.' : `No ${activeTab} reports in the queue at the moment.`}
                 </p>
+                {hasActiveFilters && (
+                  <button onClick={() => setFilters({ dateRange: 'all', priority: 'all', department: 'all' })} className="mt-6 btn-ghost">
+                    Clear Filters
+                  </button>
+                )}
               </div>
             )}
           </div>

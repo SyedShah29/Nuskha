@@ -157,7 +157,7 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
         onClick={handleGoogleSignIn}
         disabled={googleLoading || loading}
         variant="outline"
-        className="w-full flex items-center justify-center gap-3 py-3 px-4 border-2 border-gray-200 rounded-xl bg-white text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
+        className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-border rounded-xl bg-surface text-sm font-bold text-foreground hover:bg-[rgba(15,17,23,0.02)] transition-all shadow-sm"
       >
         {googleLoading ? (
           <Loader2 className="animate-spin w-5 h-5" />
@@ -188,10 +188,10 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-white text-gray-400 font-medium">
+          <span className="px-3 bg-surface text-muted-foreground font-medium">
             or continue with email
           </span>
         </div>
@@ -205,12 +205,12 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
           >
             <label
               htmlFor="name"
-              className="block text-sm font-semibold text-gray-700 mb-2"
+              className="block text-sm font-bold text-foreground mb-2"
             >
               Full Name
             </label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <input
                 id="name"
                 name="name"
@@ -219,7 +219,7 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-gray-50 focus:bg-white"
+                className="w-full pl-11 pr-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:border-[#059669] focus:ring-4 focus:ring-[#059669]/10 transition-all bg-[rgba(15,17,23,0.02)] focus:bg-white"
                 placeholder="Enter your full name"
               />
             </div>
@@ -229,12 +229,12 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-semibold text-gray-700 mb-2"
+            className="block text-sm font-bold text-foreground mb-2"
           >
             Email Address
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               id="email"
               name="email"
@@ -243,7 +243,7 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-gray-50 focus:bg-white"
+              className="w-full pl-11 pr-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:border-[#059669] focus:ring-4 focus:ring-[#059669]/10 transition-all bg-[rgba(15,17,23,0.02)] focus:bg-white"
               placeholder="you@example.com"
             />
           </div>
@@ -252,12 +252,12 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-semibold text-gray-700 mb-2"
+            className="block text-sm font-bold text-foreground mb-2"
           >
             Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               id="password"
               name="password"
@@ -269,13 +269,13 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-11 pr-12 py-3 border-2 border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all bg-gray-50 focus:bg-white"
+              className="w-full pl-11 pr-12 py-3 border border-border rounded-xl text-sm focus:outline-none focus:border-[#059669] focus:ring-4 focus:ring-[#059669]/10 transition-all bg-[rgba(15,17,23,0.02)] focus:bg-white"
               placeholder="Enter your password"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -285,7 +285,7 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
             </button>
           </div>
           {mode === "signup" && (
-            <p className="mt-1.5 text-xs text-gray-400">
+            <p className="mt-1.5 text-xs text-muted-foreground">
               Must be at least 8 characters
             </p>
           )}
@@ -295,7 +295,7 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl border border-red-100"
+            className="text-[#EF4444] text-sm font-bold bg-[#EF4444]/10 p-3 rounded-xl border border-[#EF4444]/20"
           >
             {error}
           </motion.div>
@@ -304,7 +304,7 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
         <Button
           type="submit"
           disabled={loading || googleLoading}
-          className="w-full py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 transition-all hover:-translate-y-0.5"
+          className="w-full py-6 bg-[#059669] hover:bg-[#047857] text-white font-bold rounded-xl shadow-[0_4px_24px_rgba(5,150,105,0.18)] hover:shadow-[0_6px_28px_rgba(5,150,105,0.28)] transition-all hover:-translate-y-0.5"
         >
           {loading ? (
             <Loader2 className="animate-spin w-5 h-5" />
@@ -315,23 +315,23 @@ export const AuthForm = ({ mode, userType = "patient" }: AuthFormProps) => {
           )}
         </Button>
 
-        <div className="text-center text-sm">
+        <div className="text-center text-sm pt-4">
           {mode === "login" ? (
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link
                 href="/signup"
-                className="font-semibold text-indigo-600 hover:text-indigo-700"
+                className="font-bold text-[#059669] hover:text-[#047857]"
               >
                 Sign up
               </Link>
             </p>
           ) : (
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="font-semibold text-indigo-600 hover:text-indigo-700"
+                className="font-bold text-[#059669] hover:text-[#047857]"
               >
                 Sign in
               </Link>

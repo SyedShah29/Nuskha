@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import {
   Mic,
   MessageSquare,
@@ -66,32 +67,32 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'approved':
     case 'reviewed':
-      return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+      return 'bg-[#059669]/10 text-[#059669] border border-[#059669]/20';
     case 'pending':
     case 'in_review':
-      return 'bg-amber-100 text-amber-700 border border-amber-200';
+      return 'bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/20';
     case 'rejected':
-      return 'bg-red-100 text-red-700 border border-red-200';
+      return 'bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20';
     case 'in_progress':
-      return 'bg-indigo-100 text-indigo-700 border border-indigo-200';
+      return 'bg-[rgba(15,17,23,0.06)] text-foreground border border-border';
     default:
-      return 'bg-gray-100 text-gray-700 border border-gray-200';
+      return 'bg-[rgba(15,17,23,0.04)] text-muted-foreground border border-border';
   }
 };
 
 function StatCard({ label, value, loading, icon: Icon }: { label: string; value: number; loading: boolean; icon: React.ComponentType<{ className?: string }> }) {
   return (
-    <div className="stat-card group">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-cyan-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-          <Icon className="w-5 h-5 text-indigo-500" />
+    <div className="card-surface p-6 flex flex-col justify-between h-full group">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-[rgba(15,17,23,0.04)] border border-border flex items-center justify-center group-hover:scale-110 transition-transform">
+          <Icon className="w-5 h-5 text-foreground" />
         </div>
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</p>
+        <p className="eyebrow">{label}</p>
       </div>
       {loading ? (
-        <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       ) : (
-        <p className="text-4xl font-bold bg-gradient-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent">{value}</p>
+        <p className="text-4xl font-mono-data font-bold text-foreground">{value}</p>
       )}
     </div>
   );
@@ -109,22 +110,22 @@ function SessionItem({
   return (
     <div
       className={`flex flex-col md:flex-row md:items-center justify-between p-5 transition-all group ${
-        isReviewed ? 'bg-white hover:bg-indigo-50/50 cursor-pointer rounded-2xl border border-gray-100 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/5' : 'bg-gray-50 rounded-2xl border border-gray-100'
+        isReviewed ? 'bg-surface hover:bg-[rgba(15,17,23,0.02)] cursor-pointer rounded-2xl border border-border hover:border-[rgba(15,17,23,0.12)] hover:shadow-sm' : 'bg-[rgba(15,17,23,0.02)] rounded-2xl border border-border'
       }`}
       onClick={onClick}
     >
       <div className="flex items-center gap-4">
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isReviewed ? 'bg-gradient-to-br from-emerald-400 to-teal-500' : 'bg-gradient-to-br from-indigo-400 to-cyan-500'}`}>
-          {isReviewed ? <CheckCircle className="w-5 h-5 text-white" /> : <Activity className="w-5 h-5 text-white" />}
+        <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isReviewed ? 'bg-[#059669]' : 'bg-surface border border-border'}`}>
+          {isReviewed ? <CheckCircle className="w-5 h-5 text-white" /> : <Activity className="w-5 h-5 text-foreground" />}
         </div>
         <div>
-          <p className="font-semibold text-gray-800">{session.chiefComplaint || 'Clinical Interview'}</p>
-          <p className="text-sm text-gray-500">{formatDate(session.createdAt)} &bull; {session.department}</p>
+          <p className="font-bold text-foreground">{session.chiefComplaint || 'Clinical Interview'}</p>
+          <p className="text-sm text-muted-foreground font-mono-data mt-1">{formatDate(session.createdAt)} &bull; {session.department}</p>
         </div>
       </div>
       <div className="flex items-center gap-3 mt-3 md:mt-0">
-        {!isReviewed && <Lock className="w-4 h-4 text-gray-400" />}
-        <span className={`px-3 py-1.5 rounded-xl text-xs font-semibold ${getStatusColor(session.status)}`}>
+        {!isReviewed && <Lock className="w-4 h-4 text-muted-foreground" />}
+        <span className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono-data tracking-wide uppercase ${getStatusColor(session.status)}`}>
           {session.status === 'approved' ? 'Reviewed' : session.status === 'pending' ? 'Awaiting Review' : session.status.replace('_', ' ')}
         </span>
       </div>
@@ -144,20 +145,20 @@ function PrescriptionCard({
   onToggle: () => void;
 }) {
   return (
-    <div className="border border-emerald-200 rounded-2xl overflow-hidden transition-all hover:shadow-lg hover:shadow-emerald-500/5">
-      <div className="flex items-center justify-between p-5 bg-gradient-to-r from-emerald-50 to-teal-50 cursor-pointer" onClick={onToggle}>
+    <div className="border border-border rounded-2xl overflow-hidden transition-all bg-surface hover:shadow-sm">
+      <div className="flex items-center justify-between p-5 cursor-pointer" onClick={onToggle}>
         <div className="flex items-center gap-4">
-          <div className="w-11 h-11 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center">
+          <div className="w-11 h-11 bg-[#059669] rounded-xl flex items-center justify-center shadow-sm">
             <CheckCircle className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="font-semibold text-gray-800">{prescription.chiefComplaint || 'Clinical Interview'}</p>
-            <p className="text-sm text-gray-500">{formatDate(prescription.reviewedAt)} &bull; Dr. {prescription.doctorName}</p>
+            <p className="font-bold text-foreground">{prescription.chiefComplaint || 'Clinical Interview'}</p>
+            <p className="text-sm text-muted-foreground font-mono-data mt-1">{formatDate(prescription.reviewedAt)} &bull; Dr. {prescription.doctorName}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {isFirst && <span className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-500/20">New</span>}
-          <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+          {isFirst && <span className="px-3 py-1 bg-[#059669] text-white text-xs font-bold rounded-lg shadow-sm">New</span>}
+          <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         </div>
       </div>
 
@@ -170,16 +171,16 @@ function PrescriptionCard({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="p-6 border-t border-emerald-100">
-              <div className="flex items-center gap-4 mb-5 pb-5 border-b border-gray-100">
-                <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+            <div className="p-6 border-t border-border">
+              <div className="flex items-center gap-4 mb-5 pb-5 border-b border-border">
+                <div className="w-14 h-14 bg-surface border border-border rounded-2xl flex items-center justify-center text-foreground shadow-sm">
                   <User className="w-7 h-7" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800">Dr. {prescription.doctorName}</p>
-                  <p className="text-sm text-gray-500">{prescription.doctorSpecialization || prescription.department}</p>
+                  <p className="font-bold text-foreground">Dr. {prescription.doctorName}</p>
+                  <p className="text-sm text-muted-foreground">{prescription.doctorSpecialization || prescription.department}</p>
                   {prescription.doctorHospital && (
-                    <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                       <Building2 className="w-3 h-3" />
                       {prescription.doctorHospital}
                     </p>
@@ -187,23 +188,21 @@ function PrescriptionCard({
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-2xl p-5 mb-4 border border-gray-100">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Prescription</p>
-                <p className="text-gray-700 whitespace-pre-wrap">{prescription.prescription}</p>
+              <div className="bg-[rgba(15,17,23,0.02)] rounded-2xl p-5 mb-4 border border-border">
+                <p className="eyebrow mb-3">Prescription</p>
+                <p className="text-foreground whitespace-pre-wrap">{prescription.prescription}</p>
               </div>
 
               {prescription.doctorNotes && (
-                <div className="bg-indigo-50 rounded-2xl p-5 mb-4 border border-indigo-100">
-                  <p className="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-2">Doctor&apos;s Notes</p>
-                  <p className="text-gray-700 whitespace-pre-wrap">{prescription.doctorNotes}</p>
+                <div className="bg-[#059669]/5 rounded-2xl p-5 mb-4 border border-[#059669]/20">
+                  <p className="eyebrow text-[#059669] mb-3">Doctor&apos;s Notes</p>
+                  <p className="text-foreground whitespace-pre-wrap">{prescription.doctorNotes}</p>
                 </div>
               )}
 
-              <div className="flex gap-2 pt-2 flex-wrap">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl border-gray-200"
+              <div className="flex gap-3 pt-4 border-t border-border mt-6">
+                <button
+                  className="btn-ghost text-sm"
                   onClick={async (e) => {
                     e.stopPropagation();
                     try {
@@ -216,14 +215,12 @@ function PrescriptionCard({
                     }
                   }}
                 >
-                  <Download className="w-4 h-4 mr-1" />
+                  <Download className="w-4 h-4 mr-2" />
                   Download PDF
-                </Button>
+                </button>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl border-gray-200"
+                <button
+                  className="btn-ghost text-sm"
                   onClick={async (e) => {
                     e.stopPropagation();
                     try {
@@ -245,9 +242,9 @@ function PrescriptionCard({
                     }
                   }}
                 >
-                  <FileText className="w-4 h-4 mr-1" />
+                  <FileText className="w-4 h-4 mr-2" />
                   Export FHIR
-                </Button>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -263,51 +260,51 @@ function InterviewModeDialog({ onClose }: { onClose: () => void }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl"
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        className="card-surface p-8 max-w-xl w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20">
+        <div className="text-center mb-10">
+          <div className="w-16 h-16 bg-[#059669] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_8px_32px_rgba(5,150,105,0.2)]">
             <Stethoscope className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Choose Interview Mode</h2>
-          <p className="text-gray-500 text-sm">
-            Select how you&apos;d like to communicate with our AI health assistant.
+          <h2 className="text-3xl font-bold text-foreground mb-3">Choose Interface Mode</h2>
+          <p className="text-muted-foreground">
+            Select how you&apos;d like to communicate with our clinical AI.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-4 mb-8">
           <Link href="/patient/interview?mode=voice">
-            <div className="bg-gradient-to-br from-indigo-50 to-cyan-50 rounded-2xl p-6 hover:shadow-lg transition-all cursor-pointer border-2 border-transparent hover:border-indigo-500 group">
-              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/20">
-                <Mic className="w-7 h-7 text-white" />
+            <div className="bento-emerald h-full p-6 hover:shadow-lg transition-all cursor-pointer group flex flex-col items-center text-center">
+              <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-sm">
+                <Mic className="w-7 h-7 text-[#059669]" />
               </div>
-              <h3 className="font-bold text-gray-800 mb-1">Voice Interview</h3>
-              <p className="text-xs text-gray-500">Speak naturally and let our AI understand your symptoms through conversation.</p>
+              <h3 className="font-bold text-[#059669] mb-2">Voice Interview</h3>
+              <p className="text-xs text-[#059669]/70 leading-relaxed">Speak naturally. Our AI handles the medical translation.</p>
             </div>
           </Link>
 
           <Link href="/patient/interview?mode=text">
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 hover:shadow-lg transition-all cursor-pointer border-2 border-transparent hover:border-purple-500 group">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/20">
-                <MessageSquare className="w-7 h-7 text-white" />
+            <div className="card-surface h-full p-6 hover:shadow-md transition-all cursor-pointer border-border hover:border-foreground/20 group flex flex-col items-center text-center">
+              <div className="w-14 h-14 bg-[rgba(15,17,23,0.04)] rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform border border-border">
+                <MessageSquare className="w-7 h-7 text-foreground" />
               </div>
-              <h3 className="font-bold text-gray-800 mb-1">Text Chat</h3>
-              <p className="text-xs text-gray-500">Type your symptoms and receive detailed AI responses in text format.</p>
+              <h3 className="font-bold text-foreground mb-2">Text Chat</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">Type your symptoms and receive text-based guidance.</p>
             </div>
           </Link>
         </div>
 
-        <Button variant="outline" onClick={onClose} className="w-full rounded-xl border-gray-200">
+        <button onClick={onClose} className="btn-ghost w-full justify-center">
           Cancel
-        </Button>
+        </button>
       </motion.div>
     </motion.div>
   );
@@ -391,39 +388,37 @@ export default function PatientDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
-        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 border-4 text-[#059669] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50/50 via-white to-cyan-50/50">
+    <div className="min-h-screen bg-background">
       <DashboardNavbar
         user={user}
-        brandName="Shifa"
+        brandName="Nuskha"
         searchPlaceholder="Search sessions..."
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         profileHref="/patient/profile"
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.div
-          initial={{ y: -20, opacity: 0 }}
+          initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-10"
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-12"
         >
-          <h1 className="text-4xl font-bold text-gray-900">
-            Hello,{' '}
-            <span className="bg-gradient-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent">
-              {user?.name?.split(' ')[0] || 'Patient'}
-            </span>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            Hello, {user?.name?.split(' ')[0] || 'Patient'}.
           </h1>
-          <p className="text-gray-500 mt-1">Welcome to your health dashboard</p>
+          <p className="text-muted-foreground text-lg mt-3">Here is the status of your clinical reports.</p>
         </motion.div>
 
-        <div className="mb-8 flex gap-2 p-1 bg-gray-100 rounded-2xl max-w-sm">
+        <div className="mb-10 flex gap-2 p-1.5 bg-[rgba(15,17,23,0.04)] rounded-full max-w-sm border border-border">
           {[
             { key: 'interview' as const, label: 'Sessions' },
             { key: 'prescriptions' as const, label: 'Prescriptions' },
@@ -431,10 +426,10 @@ export default function PatientDashboard() {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex-1 py-2.5 px-4 rounded-full text-sm font-bold transition-all ${
                 activeTab === tab.key
-                  ? 'bg-white text-indigo-600 shadow-md shadow-indigo-500/10'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-surface text-foreground shadow-sm border border-border'
+                  : 'text-muted-foreground hover:text-foreground border border-transparent'
               }`}
             >
               {tab.label}
@@ -446,49 +441,57 @@ export default function PatientDashboard() {
           {activeTab === 'interview' ? (
             <motion.div
               key="interview"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
               className="space-y-8"
             >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 glass-card p-8 relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-cyan-500/5" />
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                {/* Primary CTA Bento */}
+                <div className="md:col-span-8 bento-dark p-10 relative overflow-hidden group flex flex-col justify-center">
+                  {/* Abstract background element */}
+                  <div className="absolute -right-20 -top-20 w-64 h-64 bg-[#059669]/20 rounded-full blur-3xl group-hover:bg-[#059669]/30 transition-colors duration-700" />
+                  
                   <div className="relative z-10">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-3">Begin Consultation</h2>
-                    <p className="text-gray-500 mb-8 text-lg leading-relaxed max-w-lg">
-                      Consult with our AI health assistant. Describe your condition and receive a guided clinical assessment.
+                    <span className="eyebrow bg-white/10 text-white border-white/20 mb-6">New Consultation</span>
+                    <h2 className="text-3xl font-bold text-white mb-4">Start Clinical Interview</h2>
+                    <p className="text-white/70 mb-8 text-lg max-w-md leading-relaxed">
+                      Consult with our AI health assistant in Urdu or English. Receive a guided assessment.
                     </p>
-                    <Button
+                    <button
                       onClick={() => setShowInterviewDialog(true)}
-                      className="bg-gradient-to-r from-indigo-500 to-cyan-500 text-white px-8 py-4 text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5 transition-all"
+                      className="btn-primary"
                     >
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Start Session
-                    </Button>
+                      Initialize Session
+                      <span className="btn-icon-nest"><ArrowUpRight size={14} weight="bold" /></span>
+                    </button>
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <StatCard label="Sessions" value={stats.totalSessions} loading={dataLoading} icon={Activity} />
-                  <StatCard label="Reports Ready" value={stats.reportsReady} loading={dataLoading} icon={CheckCircle} />
+                <div className="md:col-span-4 grid grid-cols-1 gap-6">
                   <StatCard label="Pending Review" value={stats.pendingReview} loading={dataLoading} icon={Clock} />
+                  <div className="grid grid-cols-2 gap-6">
+                    <StatCard label="Ready" value={stats.reportsReady} loading={dataLoading} icon={CheckCircle} />
+                    <StatCard label="Total" value={stats.totalSessions} loading={dataLoading} icon={Activity} />
+                  </div>
                 </div>
               </div>
 
-              <div className="glass-card p-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-5">Recent Sessions</h3>
+              <div className="card-surface p-8">
+                <h3 className="text-xl font-bold text-foreground mb-6">Clinical History</h3>
                 {dataLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
                   </div>
                 ) : filteredSessions.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
-                    <Activity className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                    <p>No sessions yet. Start your first health interview!</p>
+                  <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-2xl">
+                    <Activity className="w-8 h-8 mx-auto mb-4 opacity-30" />
+                    <p className="font-medium">No sessions found.</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {filteredSessions.map((session) => (
                       <SessionItem
                         key={session.id}
@@ -504,27 +507,26 @@ export default function PatientDashboard() {
           ) : (
             <motion.div
               key="prescriptions"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="glass-card p-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
-                    <CheckCircle className="w-4 h-4 text-white" />
-                  </div>
-                  Doctor Prescriptions &amp; Recommendations
+              <div className="card-surface p-8">
+                <h3 className="text-xl font-bold text-foreground mb-8 flex items-center gap-3">
+                  <span className="eyebrow">Medical Records</span>
+                  Reviewed Prescriptions
                 </h3>
 
                 {dataLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-[#059669]" />
                   </div>
                 ) : prescriptions.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
-                    <FileText className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                    <p>No prescriptions yet. Complete a health interview and wait for doctor review.</p>
+                  <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-2xl">
+                    <FileText className="w-8 h-8 mx-auto mb-4 opacity-30" />
+                    <p className="font-medium">No prescriptions available yet.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">

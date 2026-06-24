@@ -14,7 +14,7 @@ export default function LoginPage() {
         setUserType={setUserType}
         layoutId="activeTab-login"
       />
-      <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
+      <h3 className="text-xl font-bold text-foreground mb-6 text-center">
         {userType === "patient" ? "Patient" : "Doctor"} Sign In
       </h3>
       <AuthForm mode="login" userType={userType} />
