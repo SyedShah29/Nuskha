@@ -1,0 +1,24 @@
+{
+  "name": "Sehat Guftagu",
+  "short_name": "Sehat Guftagu",
+  "description": "AI-powered clinical interview system for Pakistani patients — bilingual, voice-enabled medical assessment",
+  "start_url": "/patient/dashboard",
+  "display": "standalone",
+  "background_color": "#f2f1f3",
+  "theme_color": "#2c4d7b",
+  "orientation": "portrait-primary",
+  "lang": "ur-PK",
+  "dir": "rtl",
+  "categories": ["health", "medical"],
+  "icons": [
+    {
+      "src": "/logo/sehat-guftagu-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
