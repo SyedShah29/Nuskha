@@ -230,7 +230,7 @@ async function generateReport(state: DocumentationAgentState) {
       sessionId: state.sessionId,
       patientId: state.patientId,
       triageLabel: 'standard',
-      aiVersion: 'sehat-guftagu-v2.0',
+      aiVersion: 'nuskha-v2.0',
     },
   };
 

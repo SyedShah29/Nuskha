@@ -103,7 +103,7 @@ export const DualAudience = () => {
                 ))}
               </ul>
               
-              <Link href="/doctor-signup" className="mt-auto inline-block">
+              <Link href="/signup" className="mt-auto inline-block">
                 <button className="flex items-center gap-2 text-sm font-bold text-white opacity-90 group-hover:opacity-100 transition-opacity">
                   Apply for Doctor Portal
                   <ArrowRight size={16} weight="bold" className="transition-transform group-hover:translate-x-1" />

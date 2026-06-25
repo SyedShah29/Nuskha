@@ -1,32 +1,90 @@
 /**
  * LLM Utilities for Multi-Agent System
- * Shared LLM operations using LangChain + Groq
+ * Shared LLM operations using LangChain + DeepSeek
  */
 
-import { ChatGroq } from '@langchain/groq';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { BaseChatModel, type BaseChatModelParams } from '@langchain/core/language_models/chat_models';
+import { AIMessage, type BaseMessage } from '@langchain/core/messages';
+import { type ChatResult } from '@langchain/core/outputs';
 import { pipeline } from '@xenova/transformers';
 
-// Initialize LLM instances
-// Fast 8b model for simple tasks (translation) - ~3x faster than 70b
-const groqLLMFast = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY || "fallback_key_for_build",
-  model: 'llama-3.1-8b-instant',
+const DEEPSEEK_BASE = 'https://api.deepseek.com/v1';
+
+function deepseekAPIKey(): string {
+  return process.env.DEEPSEEK_API_KEY || '';
+}
+
+interface DeepSeekModelParams extends BaseChatModelParams {
+  model: string;
+  temperature: number;
+}
+
+class DeepSeekChatModel extends BaseChatModel {
+  model: string;
+  temperature: number;
+
+  constructor(params: DeepSeekModelParams) {
+    super(params);
+    this.model = params.model;
+    this.temperature = params.temperature;
+  }
+
+  _llmType(): string {
+    return 'deepseek';
+  }
+
+  async _generate(messages: BaseMessage[]): Promise<ChatResult> {
+    const apiKey = deepseekAPIKey();
+    if (!apiKey) throw new Error('DEEPSEEK_API_KEY is not set');
+
+    const body = JSON.stringify({
+      model: this.model,
+      messages: messages.map(m => {
+        const role = m.getType() === 'human' ? 'user'
+          : m.getType() === 'ai' ? 'assistant'
+          : (m.getType() as string) === 'system' ? 'system' : 'user';
+        return { role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) };
+      }),
+      temperature: this.temperature,
+      max_tokens: 2048,
+    });
+
+    const res = await fetch(`${DEEPSEEK_BASE}/chat/completions`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body,
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`DeepSeek API error ${res.status}: ${err}`);
+    }
+
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content ?? '';
+
+    return {
+      generations: [{ message: new AIMessage(content), text: content }],
+      llmOutput: data.usage ? { tokenUsage: data.usage } : undefined,
+    };
+  }
+}
+
+const deepseekFast = new DeepSeekChatModel({
+  model: 'deepseek-chat',
   temperature: 0.2,
 });
 
-const groqLLM = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY || "fallback_key_for_build",
-  model: 'llama-3.3-70b-versatile',
+const deepseekLLM = new DeepSeekChatModel({
+  model: 'deepseek-chat',
   temperature: 0.3,
 });
 
-const groqLLMCreative = new ChatGroq({
-  apiKey: process.env.GROQ_API_KEY || "fallback_key_for_build",
-  model: 'llama-3.3-70b-versatile',
-  temperature: 0.5, // Reduced from 0.6 for faster, more consistent responses
+const deepseekCreative = new DeepSeekChatModel({
+  model: 'deepseek-chat',
+  temperature: 0.5,
 });
 
 // Singleton for embedding pipeline
@@ -70,7 +128,7 @@ Return ONLY the translation.`,
   ]);
 
   try {
-    const chain = prompt.pipe(groqLLMFast).pipe(new StringOutputParser());
+    const chain = prompt.pipe(deepseekFast).pipe(new StringOutputParser());
     const result = await chain.invoke({ text });
     console.log(
       `🌐 Translated: "${text.slice(0, 50)}..." → "${result.slice(0, 50)}..."`
@@ -110,17 +168,117 @@ Identify 3-7 potential diseases/conditions with probability scores.`,
     ],
   ]);
 
-  try {
-    const chain = prompt.pipe(groqLLM).pipe(new StringOutputParser());
-    const result = await chain.invoke({ symptoms: symptoms.join(', ') });
-    const match = result.match(/\[[\s\S]*\]/);
-    if (match) {
-      return JSON.parse(match[0]);
+  let attempt = 0;
+  while (attempt < 3) {
+    try {
+      const chain = prompt.pipe(deepseekLLM).pipe(new StringOutputParser());
+      const result = await chain.invoke({ symptoms: symptoms.join(', ') });
+      console.log(`📤 [identifyDiseases] Raw output (first 200 chars):`, result.slice(0, 200));
+
+      let cleaned = result.trim();
+      const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (fenceMatch) cleaned = fenceMatch[1].trim();
+
+      const match = cleaned.match(/\[[\s\S]*\]/);
+      if (match) {
+        return JSON.parse(match[0]);
+      }
+      console.warn('⚠️ identifyDiseases: no JSON array in output');
+      break;
+    } catch (error: any) {
+      console.error(`Disease identification failed (attempt ${attempt + 1}):`, error.message || error);
+      if (attempt >= 2) break;
+      attempt++;
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
-  } catch (error) {
-    console.error('Disease identification failed:', error);
   }
   return [];
+}
+
+/**
+ * Robustly extract JSON from LLM output that may contain markdown fences or surrounding text.
+ */
+function tryParseFlatKV(raw: string): Record<string, any> | null {
+  const lines = raw.split(/\r?\n/);
+  const result: Record<string, any> = {};
+  let currentKey = '';
+  let currentValue = '';
+
+  for (const line of lines) {
+    // Match "Key: value" (case-insensitive key)
+    const kvMatch = line.match(/^(\w[\w\s]*?):\s*(.*)/);
+    if (kvMatch) {
+      // Save previous key-value pair if any
+      if (currentKey) {
+        result[currentKey.toLowerCase().replace(/\s+/g, '')] = currentValue.trim();
+      }
+      currentKey = kvMatch[1];
+      currentValue = kvMatch[2];
+    } else if (currentKey) {
+      // Continuation of a previous value (e.g. IdentifiedSymptoms spanning multiple lines)
+      currentValue += ' ' + line.trim();
+    }
+  }
+  // Save the last pair
+  if (currentKey) {
+    result[currentKey.toLowerCase().replace(/\s+/g, '')] = currentValue.trim();
+  }
+
+  // Validate we have at least the content field
+  if (!result.content) return null;
+
+  // Coerce typed fields
+  const out: Record<string, any> = { content: result.content };
+  if (result.urdu) out.urdu = result.urdu;
+  if (result.severity) out.severity = result.severity;
+  if (result.confidencelevel) {
+    const pct = parseInt(result.confidencelevel, 10);
+    out.confidenceLevel = isNaN(pct) ? result.confidencelevel : pct;
+  }
+  if (result.identifiedsymptoms) {
+    out.identifiedSymptoms = result.identifiedsymptoms
+      .split(/,\s*/)
+      .filter((s: string) => s.trim().length > 0);
+  }
+  if (result.isconfident !== undefined) {
+    out.isConfident = result.isconfident === 'true' || result.isconfident === 'True';
+  }
+  if (result.followupneeded !== undefined) {
+    out.followUpNeeded = result.followupneeded === 'true' || result.followupneeded === 'True';
+  }
+  if (result.diagnosissummary) out.diagnosisSummary = result.diagnosissummary;
+
+  return out;
+}
+
+function tryExtractJSON(raw: string): Record<string, any> | null {
+  let cleaned = raw.trim();
+
+  // Strip markdown code fences: ```json ... ``` or ``` ... ```
+  const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenceMatch) {
+    cleaned = fenceMatch[1].trim();
+  }
+
+  // Find the outermost JSON object
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    console.warn('No JSON braces found in output — falling back to key:value parser');
+    return tryParseFlatKV(cleaned);
+  }
+
+  try {
+    return JSON.parse(jsonMatch[0]);
+  } catch (e: any) {
+    // Try fixing unescaped newlines inside string values (common with raw LLM output)
+    try {
+      const fixed = jsonMatch[0].replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+      return JSON.parse(fixed);
+    } catch {
+      console.warn('JSON parse failed after both attempts:', e.message);
+      return null;
+    }
+  }
 }
 
 /**
@@ -159,13 +317,79 @@ export async function generateClinicalResponse(params: {
 
   let instruction = '';
   if (isReadyForDiagnosis) {
-    instruction = `DIAGNOSIS: Thank patient. Summarize condition simply. Mention report will be generated.
-Start: "Thank you for completing this clinical interview session!"
-Max 4 sentences. Set isConfident:true, confidenceLevel:95`;
+    instruction = `DIAGNOSIS: Thank patient. Summarize the most likely condition simply. Mention a SOAP report will be generated for doctor review.
+Start with: "Thank you for completing this clinical interview session!"
+State the top 1-2 likely conditions clearly. Keep it to 3-4 sentences. Set isConfident:true, confidenceLevel:95.`;
   } else {
-    instruction = `INTERVIEW: Ask ONE simple follow-up question (max 2 sentences).
-Focus: ${potentialDiseases.slice(0, 3).join(', ') || 'symptoms'}
-Simple language, no medical jargon. confidenceLevel: integer`;
+    // Build a focused diagnostic strategy based on what diseases remain
+    const topDiseases = potentialDiseases.slice(0, 5);
+    const confirmedSymptoms = identifiedSymptoms.join(', ') || 'none yet';
+
+    // Symptom probing map — what to ask next based on the disease cluster
+    const diseaseClues: Record<string, string[]> = {
+      // Respiratory
+      'Common Cold': ['runny nose', 'sneezing', 'mild fever', 'nasal congestion'],
+      'Bronchitis': ['persistent cough with phlegm', 'chest tightness', 'wheezing', 'low-grade fever for days'],
+      'Pneumonia': ['high fever (>38.5°C)', 'shortness of breath', 'chest pain when breathing', 'yellow/green phlegm'],
+      'Sinusitis': ['facial pressure/pain', 'nasal congestion', 'postnasal drip', 'loss of smell'],
+      'Tonsillitis': ['painful swallowing', 'swollen lymph nodes in neck', 'white patches on throat', 'high fever'],
+      'Pharyngitis': ['sore throat', 'pain when swallowing', 'red throat', 'mild fever'],
+      'Asthma': ['wheezing', 'shortness of breath', 'triggered by dust/cold air', 'worse at night'],
+      'Tuberculosis': ['night sweats', 'unexplained weight loss', 'coughing blood', 'prolonged cough >3 weeks'],
+      // GI
+      'Gastritis': ['burning stomach pain', 'pain worse on empty stomach', 'nausea after eating', 'bloating'],
+      'GERD': ['heartburn after meals', 'acid taste in mouth', 'worse when lying down', 'chest burning'],
+      'Appendicitis': ['pain starting near navel moving to lower right', 'fever', 'loss of appetite', 'pain worse with movement'],
+      'Peptic Ulcer': ['gnawing stomach pain', 'pain relieved by eating', 'black/tarry stools', 'nausea'],
+      // Neurological
+      'Migraine': ['one-sided head pain', 'sensitivity to light/sound', 'nausea with headache', 'visual aura'],
+      'Tension Headache': ['pressure/band-like pain around head', 'both sides', 'no nausea', 'triggered by stress'],
+      'Vertigo': ['room spinning sensation', 'triggered by head movement', 'nausea with dizziness', 'hearing changes'],
+      // Cardiac
+      'Hypertension': ['usually no symptoms', 'occasional headache', 'blurred vision', 'family history'],
+      'Angina': ['chest tightness on exertion', 'relieved by rest', 'left arm/jaw pain', 'shortness of breath'],
+      // General
+      'Anemia': ['fatigue', 'pale skin', 'shortness of breath on exertion', 'cold hands/feet'],
+      'Diabetes Type 2': ['excessive thirst', 'frequent urination', 'blurred vision', 'slow healing wounds'],
+      'Thyroid Disorder': ['weight change', 'fatigue', 'hair loss', 'feeling too hot or cold'],
+      'Dehydration': ['dark urine', 'dry mouth', 'dizziness when standing', 'decreased urination'],
+    };
+
+    // Find which symptoms to probe for the top diseases
+    const symptomsToProbe: string[] = [];
+    for (const disease of topDiseases) {
+      const clues = diseaseClues[disease] || [];
+      for (const clue of clues) {
+        // Only suggest symptoms not already confirmed
+        const alreadyKnown = identifiedSymptoms.some(s =>
+          s.toLowerCase().includes(clue.toLowerCase().split(' ')[0])
+        );
+        if (!alreadyKnown) {
+          symptomsToProbe.push(clue);
+        }
+      }
+    }
+
+    // De-duplicate and pick the most relevant probe
+    const uniqueProbes = [...new Set(symptomsToProbe)].slice(0, 6);
+
+    instruction = `DIAGNOSTIC INTERVIEW — FOCUSED QUESTIONING:
+
+You are a clinical AI narrowing a differential diagnosis. Current top conditions:
+${topDiseases.map((d, i) => `  ${i + 1}. ${d}`).join('\n')}
+
+Symptoms already confirmed from patient: ${confirmedSymptoms}
+
+Key symptoms still needed to differentiate: ${uniqueProbes.length > 0 ? uniqueProbes.join(', ') : 'duration, severity, associated symptoms'}
+
+YOUR TASK: Ask exactly ONE specific, targeted question about ONE of the key symptoms above.
+- Be specific: NOT "any other symptoms?" but "do you have a fever?" or "is your cough dry or are you coughing up phlegm?"
+- If asking about pain: ask its character (sharp/dull/burning), location, or timing
+- If throat: ask about fever, difficulty swallowing, or swollen glands
+- Match the patient's language (Urdu/Roman Urdu/English — match what they used)
+- Max 2 sentences. Conversational tone. No medical jargon.
+- Do NOT repeat a question already in the chat history
+- Do NOT ask generic questions`;
   }
 
   // Pediatric & Geriatric Modes
@@ -181,17 +405,18 @@ Simple language, no medical jargon. confidenceLevel: integer`;
   const recentHistory = conversationHistory.slice(-4);
   const limitedMedicalContext = medicalContext.slice(0, 800);
 
-  // Build the JSON format instruction with escaped braces
+  // Build the JSON format instruction with escaped braces for LangChain templates
   const jsonFormat = isReadyForDiagnosis
-    ? '{{content, urdu, severity, confidenceLevel, identifiedSymptoms, isConfident, followUpNeeded, diagnosisSummary}}'
-    : '{{content, urdu, severity, confidenceLevel, identifiedSymptoms, isConfident, followUpNeeded}}';
+    ? '{{"content": string, "urdu": string, "severity": string, "confidenceLevel": number, "identifiedSymptoms": string[], "isConfident": boolean, "followUpNeeded": boolean, "diagnosisSummary": string}}'
+    : '{{"content": string, "urdu": string, "severity": string, "confidenceLevel": number, "identifiedSymptoms": string[], "isConfident": boolean, "followUpNeeded": boolean}}';
 
   const prompt = ChatPromptTemplate.fromMessages([
     [
       'system',
       `Medical AI interview. Match patient's language (English/Roman Urdu). No medications.
 ${instruction}
-Return valid JSON with these fields: ${jsonFormat}`,
+CRITICAL: Return ONLY a valid JSON object with exactly these fields: ${jsonFormat}
+Do NOT return plain text. Do NOT wrap in markdown. Output must be parseable JSON.`,
     ],
     [
       'human',
@@ -205,26 +430,38 @@ Symptoms: ${identifiedSymptoms.slice(0, 10).join(', ') || 'None'}`,
     ],
   ]);
 
-  try {
-    const chain = prompt.pipe(groqLLMCreative).pipe(new StringOutputParser());
-    const result = await chain.invoke({});
-    const match = result.match(/\{[\s\S]*\}/);
-    if (match) {
-      const parsed = JSON.parse(match[0]);
-      return {
-        content: parsed.content || 'Please describe your symptoms.',
-        urdu: parsed.urdu || 'براہ کرم علامات بیان کریں',
-        severity: parsed.severity || 'moderate',
-        confidenceLevel: parsed.confidenceLevel || confidenceScore,
-        identifiedSymptoms: parsed.identifiedSymptoms || identifiedSymptoms,
-        isConfident: parsed.isConfident || false,
-        diagnosisSummary: parsed.diagnosisSummary,
-      };
+  let attempt = 0;
+  while (attempt < 3) {
+    try {
+      const chain = prompt.pipe(deepseekCreative).pipe(new StringOutputParser());
+      const result = await chain.invoke({});
+      console.log(`📤 [generateClinicalResponse] Raw LLM output (first 300 chars):`, result.slice(0, 300));
+
+      const parsed = tryExtractJSON(result);
+      if (parsed) {
+        return {
+          content: parsed.content || 'Please describe your symptoms.',
+          urdu: parsed.urdu || 'براہ کرم علامات بیان کریں',
+          severity: parsed.severity || 'moderate',
+          confidenceLevel: parsed.confidenceLevel || confidenceScore,
+          identifiedSymptoms: parsed.identifiedSymptoms || identifiedSymptoms,
+          isConfident: parsed.isConfident || false,
+          diagnosisSummary: parsed.diagnosisSummary,
+        };
+      }
+      console.warn('⚠️ LLM returned no valid JSON even after extraction. Retrying...');
+      if (attempt >= 2) break;
+      attempt++;
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } catch (error: any) {
+      console.error(`Clinical response generation failed (attempt ${attempt + 1}):`, error.message || error);
+      if (attempt >= 2) break;
+      attempt++;
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
-  } catch (error) {
-    console.error('Clinical response generation failed:', error);
   }
 
+  console.warn('⚠️ All clinical response attempts failed — returning fallback');
   return {
     content: 'Could you please describe your symptoms in more detail?',
     urdu: 'براہ کرم اپنی علامات کی مزید تفصیل بیان کریں',
@@ -316,12 +553,11 @@ Medical sources used: ${ragSources.slice(0, 5).join(', ') || 'General knowledge'
   ]);
 
   try {
-    const chain = prompt.pipe(groqLLMCreative).pipe(new StringOutputParser());
+    const chain = prompt.pipe(deepseekCreative).pipe(new StringOutputParser());
     const result = await chain.invoke({});
-    const match = result.match(/\{[\s\S]*\}/);
-    if (match) {
-      return JSON.parse(match[0]);
-    }
+    console.log(`📤 [generateSOAPReport] Raw output (first 200 chars):`, result.slice(0, 200));
+    const parsed = tryExtractJSON(result);
+    if (parsed) return parsed;
   } catch (error) {
     console.error('SOAP generation failed:', error);
   }
@@ -406,12 +642,10 @@ Patient age: ${patientAge || 'Unknown'}`,
   ]);
 
   try {
-    const chain = prompt.pipe(groqLLM).pipe(new StringOutputParser());
+    const chain = prompt.pipe(deepseekLLM).pipe(new StringOutputParser());
     const result = await chain.invoke({});
-    const match = result.match(/\{[\s\S]*\}/);
-    if (match) {
-      return JSON.parse(match[0]);
-    }
+    const parsed = tryExtractJSON(result);
+    if (parsed) return parsed;
   } catch (error) {
     console.error('Emergency check failed:', error);
   }
@@ -469,12 +703,10 @@ TASK:
   ]);
 
   try {
-    const chain = prompt.pipe(groqLLMCreative).pipe(new StringOutputParser());
+    const chain = prompt.pipe(deepseekCreative).pipe(new StringOutputParser());
     const result = await chain.invoke({});
-    const match = result.match(/\{[\s\S]*\}/);
-    if (match) {
-      return JSON.parse(match[0]);
-    }
+    const parsed = tryExtractJSON(result);
+    if (parsed) return parsed;
   } catch (error) {
     console.error('SOAP regeneration failed:', error);
   }
@@ -482,4 +714,4 @@ TASK:
   return originalReport;
 }
 
-export { groqLLM, groqLLMCreative };
+export { deepseekLLM, deepseekCreative };

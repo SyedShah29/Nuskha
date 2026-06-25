@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import prisma from '@/lib/prisma';
-import { ChatGroq } from '@langchain/groq';
+import { deepseekLLM } from '@/lib/agents/llm-utils';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 
@@ -26,12 +26,6 @@ export async function POST(
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const groqLLM = new ChatGroq({
-      apiKey: process.env.GROQ_API_KEY,
-      model: 'llama-3.3-70b-versatile',
-      temperature: 0.3,
-    });
 
     const { id } = await params;
     const body = await request.json();
@@ -151,7 +145,7 @@ ${chatHistoryText ? `PREVIOUS CONVERSATION:\n${chatHistoryText}` : ''}`,
       ['human', '{question}'],
     ]);
 
-    const chain = prompt.pipe(groqLLM).pipe(new StringOutputParser());
+    const chain = prompt.pipe(deepseekLLM).pipe(new StringOutputParser());
     const response = await chain.invoke({ question });
 
     return NextResponse.json({

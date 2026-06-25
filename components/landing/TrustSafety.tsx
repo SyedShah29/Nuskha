@@ -51,7 +51,7 @@ const trustCards = [
 export const TrustSafety = () => {
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      {/* Subtle Islamic arch pattern — like Sehat Guftagu reference */}
+      {/* Subtle Islamic arch pattern — like Nuskha reference */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{

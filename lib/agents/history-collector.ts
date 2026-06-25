@@ -16,7 +16,7 @@ import type {
   MedicalHistoryData,
 } from './types';
 import { HistoryCollectorStateSchema } from './types';
-import { groqLLM } from './llm-utils';
+import { deepseekLLM } from './llm-utils';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import prisma from '@/lib/prisma';
@@ -205,7 +205,7 @@ async function parseResponse(
       ['human', response],
     ]);
     try {
-      const chain = prompt.pipe(groqLLM).pipe(new StringOutputParser());
+      const chain = prompt.pipe(deepseekLLM).pipe(new StringOutputParser());
       const result = await chain.invoke({});
       const cleaned = result.trim().toLowerCase();
       if (options.includes(cleaned)) return cleaned;

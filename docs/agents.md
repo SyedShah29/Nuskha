@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sehat Guftagu uses a multi-agent system built on LangGraph for orchestrating clinical interviews. Each agent is a specialized StateGraph that handles a specific part of the clinical workflow.
+Nuskha uses a multi-agent system built on LangGraph for orchestrating clinical interviews. Each agent is a specialized StateGraph that handles a specific part of the clinical workflow.
 
 ## Agent Index
 

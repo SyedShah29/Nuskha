@@ -26,7 +26,7 @@ export const CTASection = () => {
               </span>
             </button>
           </Link>
-          <Link href="/doctor-signup">
+          <Link href="/signup">
             <button className="btn-ghost text-white border-white/20 hover:bg-white/5 hover:border-white/30">
               Apply as a Doctor
             </button>

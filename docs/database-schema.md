@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sehat Guftagu uses PostgreSQL with Prisma ORM. The schema supports patient management, clinical sessions, SOAP reports, and doctor profiles.
+Nuskha uses PostgreSQL with Prisma ORM. The schema supports patient management, clinical sessions, SOAP reports, and doctor profiles.
 
 ## Entity Relationship Diagram
 

@@ -256,7 +256,7 @@ export async function POST(
         patientId: report.patientId,
         department: report.department || undefined,
         triageLabel,
-        aiVersion: 'sehat-guftagu-v2.0',
+        aiVersion: 'nuskha-v2.0',
       },
     };
 

@@ -1,6 +1,6 @@
 /**
  * Multi-Agent Orchestration Types
- * Sehat Guftagu - Healthcare Interview System
+ * Nuskha - Healthcare Interview System
  *
  * Agents:
  * 1. History Collector Agent - Collects medical history during onboarding

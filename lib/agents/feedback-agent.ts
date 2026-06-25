@@ -111,7 +111,7 @@ async function regenerateReport(state: FeedbackAgentState) {
         patientId: originalReport.patientId,
         department: originalReport.department || undefined,
         triageLabel: 'standard',
-        aiVersion: 'sehat-guftagu-v2.0-regenerated',
+        aiVersion: 'nuskha-v2.0-regenerated',
       },
     };
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the key frontend components in Sehat Guftagu.
+This document describes the key frontend components in Nuskha.
 
 ## Directory Structure
 

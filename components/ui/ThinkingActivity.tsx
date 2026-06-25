@@ -51,39 +51,29 @@ export function ThinkingActivity({
   // Simulate step progression for live thinking
   useEffect(() => {
     if (isThinking && steps.length > 0) {
-      let currentIndex = 0;
+      setDisplaySteps([]); // Reset steps before starting new interval
+      let currentTick = 0;
+      
       const interval = setInterval(() => {
-        if (currentIndex < steps.length) {
-          setDisplaySteps(prev => {
-            const newSteps = [...prev];
-            if (currentIndex > 0 && newSteps[currentIndex - 1]) {
-              newSteps[currentIndex - 1] = {
-                ...newSteps[currentIndex - 1],
-                status: 'completed',
-              };
-            }
-            if (steps[currentIndex]) {
-              newSteps.push({ ...steps[currentIndex], status: 'running' });
-            }
-            return newSteps;
-          });
-          currentIndex++;
+        currentTick++;
+        
+        if (currentTick <= steps.length) {
+          // Deterministically generate the display array by slicing the original steps
+          const newDisplaySteps = steps.slice(0, currentTick).map((step, index) => ({
+            ...step,
+            status: (index === currentTick - 1) ? 'running' : 'completed' as const
+          }));
+          setDisplaySteps(newDisplaySteps);
         } else {
-          // Mark last step as completed
-          setDisplaySteps(prev => {
-            if (prev.length > 0) {
-              const newSteps = [...prev];
-              newSteps[newSteps.length - 1] = {
-                ...newSteps[newSteps.length - 1],
-                status: 'completed',
-              };
-              return newSteps;
-            }
-            return prev;
-          });
+          // All steps completed
+          const completedSteps = steps.map(step => ({
+            ...step,
+            status: 'completed' as const
+          }));
+          setDisplaySteps(completedSteps);
           clearInterval(interval);
         }
-      }, 800); // Show each step for 800ms
+      }, 800);
 
       return () => clearInterval(interval);
     } else if (!isThinking && steps.length > 0) {
@@ -218,21 +208,19 @@ export function TypingText({
   useEffect(() => {
     if (!text || displayedLength >= text.length) return;
 
-    const timer = setInterval(() => {
-      setDisplayedLength(prev => {
-        const next = prev + 1;
-        if (next >= text.length) {
-          clearInterval(timer);
-          setIsComplete(true);
-          onComplete?.();
-          return text.length;
-        }
-        return next;
-      });
+    const timer = setTimeout(() => {
+      setDisplayedLength(prev => prev + 1);
     }, speed);
 
-    return () => clearInterval(timer);
-  }, [text, speed]);
+    return () => clearTimeout(timer);
+  }, [text, speed, displayedLength]);
+
+  useEffect(() => {
+    if (text && displayedLength >= text.length && !isComplete) {
+      setIsComplete(true);
+      setTimeout(() => onComplete?.(), 0);
+    }
+  }, [displayedLength, text, isComplete, onComplete]);
 
   return (
     <span>
@@ -337,17 +325,20 @@ export function generateThinkingSteps(
   diseaseCount: number
 ): ThinkingStep[] {
   const isHighConfidence = confidence >= 70;
+  
+  // Create a unique prefix for this generation to guarantee unique keys
+  const idPrefix = Math.random().toString(36).substring(2, 9);
 
   return [
     {
-      id: `step-1-${Date.now()}`,
+      id: `step-1-${idPrefix}`,
       agent: 'Translation Agent',
       action: getRandomItem(TRANSLATION_ACTIONS),
       status: 'pending',
       icon: 'sparkles',
     },
     {
-      id: `step-2-${Date.now()}`,
+      id: `step-2-${idPrefix}`,
       agent: 'RAG Retrieval Agent',
       action: getRandomItem(RAG_ACTIONS),
       status: 'pending',
@@ -355,7 +346,7 @@ export function generateThinkingSteps(
       details: `Retrieved ${3 + Math.floor(Math.random() * 7)} relevant medical documents`,
     },
     {
-      id: `step-3-${Date.now()}`,
+      id: `step-3-${idPrefix}`,
       agent: 'History Collector Agent',
       action: getRandomItem(HISTORY_ACTIONS),
       status: 'pending',
@@ -363,7 +354,7 @@ export function generateThinkingSteps(
       details: 'Loaded chronic conditions, medications, allergies',
     },
     {
-      id: `step-4-${Date.now()}`,
+      id: `step-4-${idPrefix}`,
       agent: 'Disease Identification Agent',
       action: `${getRandomItem(DISEASE_ACTIONS)} (${diseaseCount} conditions)`,
       status: 'pending',
@@ -371,7 +362,7 @@ export function generateThinkingSteps(
       details: getRandomItem(DISEASE_DETAILS),
     },
     {
-      id: `step-5-${Date.now()}`,
+      id: `step-5-${idPrefix}`,
       agent: 'Clinical Reasoning Agent',
       action: isHighConfidence
         ? getRandomItem(REASONING_ACTIONS_HIGH)
@@ -381,7 +372,7 @@ export function generateThinkingSteps(
       details: `Current confidence: ${confidence}%`,
     },
     {
-      id: `step-6-${Date.now()}`,
+      id: `step-6-${idPrefix}`,
       agent: 'Safety Agent',
       action: getRandomItem(SAFETY_ACTIONS),
       status: 'pending',

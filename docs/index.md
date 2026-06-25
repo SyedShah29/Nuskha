@@ -1,4 +1,4 @@
-# Sehat Guftagu - Technical Documentation
+# Nuskha - Technical Documentation
 
 > **Version:** 2.0  
 > **AI Model:** Groq LLaMA 3.3 70B  
@@ -6,7 +6,7 @@
 
 ## Overview
 
-Sehat Guftagu (صحت گفتگو) is an AI-powered clinical interview system designed for Pakistan's healthcare landscape. It conducts medical interviews in Urdu/English, generates SOAP reports, and connects patients with doctors through an intelligent triage system.
+Nuskha (نسخہ) is an AI-powered clinical interview system designed for Pakistan's healthcare landscape. It conducts medical interviews in Urdu/English, generates SOAP reports, and connects patients with doctors through an intelligent triage system.
 
 ## Documentation Index
 

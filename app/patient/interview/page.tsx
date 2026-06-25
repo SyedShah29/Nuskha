@@ -510,19 +510,28 @@ function InterviewPageContent() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       const recognition = new SpeechRecognitionAPI();
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'ur-PK';
       transcriptRef.current = '';
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       recognition.onresult = (event: any) => {
-        const transcript = Array.from(event.results)
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .map((result: any) => result[0].transcript)
-          .join('');
-        transcriptRef.current = transcript;
-        setState((prev) => ({ ...prev, inputValue: transcript }));
+        // In continuous mode, accumulate final segments + show interim in real time
+        let finalTranscript = '';
+        let interimTranscript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+        transcriptRef.current = finalTranscript;
+        // Show combined final + interim so user sees live transcription
+        const displayText = finalTranscript + interimTranscript;
+        setState((prev) => ({ ...prev, inputValue: displayText }));
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

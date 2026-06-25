@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
     let department = '';
     let triageLabel = '';
 
-    if (sessionId && result.isComplete) {
+    if (sessionId && (result.isComplete || generateReport)) {
       console.log('\n' + '═'.repeat(60));
       console.log('📄 TRIGGERING POST-INTERVIEW AGENTS');
       console.log('   - Documentation Agent (SOAP Generation)');

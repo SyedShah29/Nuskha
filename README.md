@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="public/logo/sehat-guftagu-logo.svg" alt="Sehat Guftagu Logo" width="200"/>
+<img src="public/logo/nuskha-logo.svg" alt="Nuskha Logo" width="200"/>
 
-# Sehat Guftagu (صحت گفتگو)
+# Nuskha (نسخہ)
 
 ### AI-Powered Clinical Interview System
 
@@ -25,7 +25,7 @@
 
 ## 🌟 Overview
 
-**Sehat Guftagu** is an AI-powered clinical interview platform designed for healthcare landscape. It conducts medical interviews in **Urdu/English**, generates **SOAP reports**, and connects patients with doctors through an intelligent **triage system**.
+**Nuskha** is an AI-powered clinical interview platform designed for healthcare landscape. It conducts medical interviews in **Urdu/English**, generates **SOAP reports**, and connects patients with doctors through an intelligent **triage system**.
 
 <div align="center">
 
@@ -232,7 +232,7 @@ graph LR
 ## 📁 Project Structure
 
 ```
-sehat-guftagu/
+nuskha/
 ├── 📂 app/                    # Next.js App Router
 │   ├── 📂 (auth)/            # Auth pages
 │   ├── 📂 api/               # API endpoints

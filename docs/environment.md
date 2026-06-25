@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document lists all environment variables required to run Sehat Guftagu.
+This document lists all environment variables required to run Nuskha.
 
 ## Environment File
 
@@ -78,7 +78,7 @@ postgresql://[user]:[password]@[host]:[port]/[database]
 
 ```env
 # Local development
-DATABASE_URL="postgresql://postgres:password@localhost:5432/sehat_guftagu"
+DATABASE_URL="postgresql://postgres:password@localhost:5432/nuskha"
 
 # Supabase
 DATABASE_URL="postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres"
@@ -244,7 +244,7 @@ Important variables to set:
 
 ```env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/sehat_guftagu"
+DATABASE_URL="postgresql://user:password@localhost:5432/nuskha"
 
 # Authentication
 BETTER_AUTH_SECRET="change-this-to-a-secure-32-char-secret"

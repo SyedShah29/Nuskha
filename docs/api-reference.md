@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sehat Guftagu exposes RESTful API endpoints through Next.js API routes. All endpoints require authentication unless noted otherwise.
+Nuskha exposes RESTful API endpoints through Next.js API routes. All endpoints require authentication unless noted otherwise.
 
 ## Base URL
 

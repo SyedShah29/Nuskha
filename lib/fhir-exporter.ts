@@ -1,6 +1,6 @@
 /**
  * FHIR R4 Exporter
- * Converts Sehat Guftagu SOAP reports to HL7 FHIR R4 format
+ * Converts Nuskha SOAP reports to HL7 FHIR R4 format
  * FHIR is the global hospital EMR interoperability standard
  *
  * Free standard — no license, no key required
@@ -48,7 +48,7 @@ export function convertSOAPToFHIR(
     },
     identifier: [
       {
-        system: 'https://sehatguftagu.app/patients',
+        system: 'https://nuskha.app/patients',
         value: patientId,
       },
     ],
@@ -202,7 +202,7 @@ export function convertSOAPToFHIR(
     date: now,
     author: [
       {
-        display: 'Sehat Guftagu AI — v2.0 (Provisional — requires physician review)',
+        display: 'Nuskha AI — v2.0 (Provisional — requires physician review)',
       },
     ],
     description: `SOAP Report — ${soapReport.assessment?.primaryDiagnosis || 'Clinical Assessment'}`,
@@ -292,7 +292,7 @@ function buildSOAPNarrativeText(soapReport: SOAPReport): string {
   const p = soapReport.plan;
 
   return [
-    '=== SEHAT GUFTAGU SOAP REPORT ===',
+    '=== NUSKHA SOAP REPORT ===',
     `Generated: ${(soapReport.metadata as any)?.generatedAt || new Date().toISOString()}`,
     `ICD-11: ${(soapReport.metadata as any)?.icd11Code || 'Pending'} — ${(soapReport.metadata as any)?.icd11Title || ''}`,
     '',

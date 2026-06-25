@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sehat Guftagu uses a multi-agent architecture powered by LangGraph for orchestrating clinical interviews. The system is built as a Next.js application with a PostgreSQL database and integrates multiple AI services.
+Nuskha uses a multi-agent architecture powered by LangGraph for orchestrating clinical interviews. The system is built as a Next.js application with a PostgreSQL database and integrates multiple AI services.
 
 ![System Architecture Design](./images/Sytem%20Architecture%20Design.jpg)
 _System Architecture Overview_
@@ -40,7 +40,7 @@ _System Architecture Overview_
 ## Directory Structure
 
 ```
-sehat-guftagu/
+nuskha/
 ├── app/                    # Next.js App Router
 │   ├── (auth)/            # Authentication pages
 │   │   ├── login/
