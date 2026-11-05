@@ -61,7 +61,7 @@ export function ThinkingActivity({
           // Deterministically generate the display array by slicing the original steps
           const newDisplaySteps = steps.slice(0, currentTick).map((step, index) => ({
             ...step,
-            status: (index === currentTick - 1) ? 'running' : 'completed' as const
+            status: ((index === currentTick - 1) ? 'running' : 'completed') as ThinkingStep['status'],
           }));
           setDisplaySteps(newDisplaySteps);
         } else {
