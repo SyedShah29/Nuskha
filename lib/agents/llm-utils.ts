@@ -557,7 +557,7 @@ Medical sources used: ${ragSources.slice(0, 5).join(', ') || 'General knowledge'
     const result = await chain.invoke({});
     console.log(`📤 [generateSOAPReport] Raw output (first 200 chars):`, result.slice(0, 200));
     const parsed = tryExtractJSON(result);
-    if (parsed) return parsed;
+    if (parsed) return parsed as { subjective: any; objective: any; assessment: any; plan: any };
   } catch (error) {
     console.error('SOAP generation failed:', error);
   }
