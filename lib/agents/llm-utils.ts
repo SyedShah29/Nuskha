@@ -645,7 +645,7 @@ Patient age: ${patientAge || 'Unknown'}`,
     const chain = prompt.pipe(deepseekLLM).pipe(new StringOutputParser());
     const result = await chain.invoke({});
     const parsed = tryExtractJSON(result);
-    if (parsed) return parsed;
+    if (parsed) return parsed as { isEmergency: boolean; redFlags: string[]; triageLabel: 'emergency' | 'urgent' | 'standard' | 'routine'; urgencyScore: number };
   } catch (error) {
     console.error('Emergency check failed:', error);
   }
@@ -706,7 +706,7 @@ TASK:
     const chain = prompt.pipe(deepseekCreative).pipe(new StringOutputParser());
     const result = await chain.invoke({});
     const parsed = tryExtractJSON(result);
-    if (parsed) return parsed;
+    if (parsed) return parsed as { subjective: any; objective: any; assessment: any; plan: any };
   } catch (error) {
     console.error('SOAP regeneration failed:', error);
   }
