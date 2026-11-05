@@ -1,284 +1,232 @@
 <div align="center">
+  <img src="assets/banner.svg" alt="Nuskha — AI clinical interview system" width="100%">
+</div>
 
-<img src="public/logo/nuskha-logo.svg" alt="Nuskha Logo" width="200"/>
+<div align="center">
 
-# Nuskha (نسخہ)
+**A clinical interview that documents itself.**
 
-### AI-Powered Clinical Interview System
+[![CI](https://github.com/SyedShah29/Nuskha/actions/workflows/ci.yml/badge.svg)](https://github.com/SyedShah29/Nuskha/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-34d399.svg)](LICENSE)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-000000.svg)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)
+[![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-4169e1.svg)](https://www.postgresql.org/)
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.1-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![LangChain](https://img.shields.io/badge/LangGraph-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://langchain.com/)
-
-[![Groq](https://img.shields.io/badge/Groq_LLaMA-FF6B35?style=for-the-badge&logo=meta&logoColor=white)](https://groq.com/)
-[![Pinecone](https://img.shields.io/badge/Pinecone-000000?style=for-the-badge&logo=pinecone&logoColor=white)](https://www.pinecone.io/)
-[![ElevenLabs](https://img.shields.io/badge/ElevenLabs-000000?style=for-the-badge&logo=elevenlabs&logoColor=white)](https://elevenlabs.io/)
+Designed and built by **Syed Hasaan Shah**.
 
 </div>
 
 ---
 
-## 🌟 Overview
+Nuskha runs a structured clinical interview in Urdu or English, follows up on
+answers like a clinician would, and turns the conversation into a SOAP report
+that a doctor can review, edit, and sign off. A multi-agent LangGraph pipeline
+separates interviewing, documentation, and safety so each stage has one job.
 
-**Nuskha** is an AI-powered clinical interview platform designed for healthcare landscape. It conducts medical interviews in **Urdu/English**, generates **SOAP reports**, and connects patients with doctors through an intelligent **triage system**.
+Patients get a guided intake, a medical history, and a documented session.
+Doctors get a triage queue, the full report with evidence, and a review and
+prescription workflow.
 
-<div align="center">
-
-|         Feature         | Description                            |
-| :---------------------: | :------------------------------------- |
-|    🗣️ **Bilingual**     | Full Urdu/English conversation support |
-|   🎙️ **Voice & Text**   | Choose your preferred interview mode   |
-|  🤖 **Multi-Agent AI**  | 5 specialized LangGraph agents         |
-|   📋 **SOAP Reports**   | Automated medical documentation        |
-|  👨‍⚕️ **Doctor Portal**   | Review, approve, and prescribe         |
-| 🚨 **Emergency Triage** | Automatic red flag detection           |
-| 📚 **RAG Integration**  | Medical knowledge retrieval            |
-
-</div>
+```text
+intake → interview → red-flag check → SOAP report → doctor review → prescription
+```
 
 ---
 
-## 🏗️ System Architecture
+## Why Nuskha
 
-<div align="center">
-
-<img src="docs/images/Sytem Architecture Design.jpg" alt="System Architecture" width="100%"/>
-
-_Complete System Architecture Design_
-
-</div>
-
----
-
-## 🔄 Multi-Agent Orchestration
-
-<div align="center">
-
-<img src="docs/images/orchestration flow.jpeg" alt="Orchestration Flow" width="100%"/>
-
-_AI Agent Pipeline - From Patient Interview to Doctor Review_
-
-</div>
+- **Bilingual by design** — the full interview works in Urdu and English,
+  including voice input and spoken responses.
+- **Multi-agent, not one prompt** — interviewing, documentation, and safety are
+  separate agents with separate responsibilities.
+- **Documentation as a by-product** — SOAP notes are generated from the
+  conversation, not typed afterwards.
+- **Safety is a stage, not a hope** — guardrails and emergency checks run during
+  the interview and before a report is released.
+- **A real clinical workflow** — patient intake, doctor review, prescription,
+  FHIR export, and follow-up chat around the report.
+- **Retrieval-grounded** — medical knowledge is retrieved from a Pinecone index
+  instead of relying on model memory.
 
 ---
 
-## 🔍 RAG Workflow
+## Features
 
-<div align="center">
+### Patient experience
+- Bilingual chat and voice interview (`app/patient/interview`).
+- Guided medical history capture (`app/patient/profile`,
+  `app/api/medical-history`).
+- Live clinical chat with server-side orchestration
+  (`app/api/clinical-chat/route.ts`).
+- Speech-to-text and text-to-speech endpoints
+  (`app/api/voice/stt`, `app/api/voice/tts`).
+- Vision analysis endpoint for uploaded images
+  (`app/api/vision-analyze`).
+- Emergency hospital lookup by location
+  (`app/api/emergency-hospitals`).
+- Patient dashboard with session and report history
+  (`app/api/patient/stats`).
 
-<img src="docs/images/medical rag workflow.jpeg" alt="Medical RAG Workflow" width="100%"/>
+### Clinical agents
+- `lib/agents/` — LangGraph orchestration for interview, documentation, and
+  safety.
+- Interview agent with reasoning sub-agents and confidence tracking.
+- Documentation agent that produces SOAP sections once the interview reaches
+  completion confidence.
+- Safety agent that labels triage severity and red flags.
+- Guardrails that validate user input and constrain model output.
+- Pinecone-backed retrieval for medical context.
 
-_Medical Knowledge Retrieval System_
+### Doctor experience
+- Doctor onboarding and profile management
+  (`app/doctor/onboarding`, `app/doctor/profile`).
+- Triage dashboard with patient and report statistics
+  (`app/api/doctors/stats`).
+- Full report review with evidence, editing, and approval
+  (`app/doctor/report/[id]`).
+- Prescription generation (`app/api/reports/[id]/prescription`).
+- Report-scoped follow-up chat (`app/api/reports/[id]/chat`).
+- FHIR export for interoperability (`app/api/reports/[id]/fhir`).
+- Doctor directory and availability checks
+  (`app/api/doctors`, `app/api/doctors/check`).
 
-</div>
+### Platform
+- Authentication with better-auth (email/password and Google OAuth).
+- Role-aware routing for patients and doctors (`app/api/user/role`).
+- PostgreSQL with Prisma (`prisma/schema.prisma`).
+- Document generation with jsPDF.
+- Marketing site, documentation page, and not-found handling.
 
 ---
 
-## 🛠️ Tech Stack
+## Architecture
 
-<div align="center">
-
-### Frontend
-
-|                                                       Technology                                                       | Purpose                          |
-| :--------------------------------------------------------------------------------------------------------------------: | :------------------------------- |
-|         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" width="40"/>          | **Next.js 16** - React Framework |
-|          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40"/>           | **React 19** - UI Library        |
-|     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="40"/>      | **TypeScript 5** - Type Safety   |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" width="40"/> | **TailwindCSS 4** - Styling      |
-
-### Backend & Database
-
-|                                                  Technology                                                   | Purpose                          |
-| :-----------------------------------------------------------------------------------------------------------: | :------------------------------- |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="40"/> | **PostgreSQL** - Database        |
-| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg" width="40"/>  | **Prisma** - ORM                 |
-|    <img src="https://github.com/user-attachments/assets/7dadde8f-b773-4006-8cc9-9f089bc7bf31" width="40"/>    | **Better Auth** - Authentication |
-
-### AI & Services
-
-|                                               Technology                                                | Purpose                             |
-| :-----------------------------------------------------------------------------------------------------: | :---------------------------------- |
-| <img src="https://github.com/user-attachments/assets/37a17015-e535-4fad-9d82-8643b65b40e7" width="40"/> | **Groq** - LLaMA 3.3 70B LLM        |
-| <img src="https://github.com/user-attachments/assets/3a86b856-70ac-4e92-b106-6648ba371f9e" width="40"/> | **Pinecone** - Vector Database      |
-| <img src="https://github.com/user-attachments/assets/158b63e5-7563-4301-881c-788554b1fbcc" width="40"/> | **LangGraph** - Agent Orchestration |
-|                        <img src="https://elevenlabs.io/favicon.ico" width="40"/>                        | **ElevenLabs** - Text-to-Speech     |
-
-</div>
+```mermaid
+flowchart LR
+    P["Patient<br/>chat · voice · history"] --> API["Next.js route handlers"]
+    API --> ORCH["LangGraph orchestration"]
+    ORCH --> INT["Interview agent"]
+    ORCH --> DOC["Documentation agent<br/>SOAP"]
+    ORCH --> SAFE["Safety agent<br/>triage"]
+    INT --> RAG["Pinecone retrieval"]
+    DOC --> DB[("PostgreSQL<br/>Prisma")]
+    SAFE --> DB
+    API --> AUTH["better-auth"]
+    API --> VOICE["STT / TTS"]
+    DB --> DR["Doctor portal<br/>review · prescription"]
+    DR --> FHIR["FHIR export"]
+```
 
 ---
 
-## 🚀 Quick Start
+## Tech stack
 
-### Prerequisites
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 16 (App Router), React 19, TypeScript 5 |
+| Styling | Tailwind CSS 4, shadcn/ui, Radix, Motion |
+| Auth | better-auth (email/password, Google OAuth) |
+| Data | PostgreSQL, Prisma 7 |
+| Agents | LangGraph, LangChain |
+| Models | Groq, Google Gemini |
+| Retrieval | Pinecone |
+| Voice | ElevenLabs, speech-to-text and text-to-speech routes |
+| Documents | jsPDF, FHIR resources |
 
-<div align="center">
+---
 
-|                                             Requirement                                              | Version  |
-| :--------------------------------------------------------------------------------------------------: | :------: |
-|        ![Node](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)         |   18+    |
-| ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-4169E1?logo=postgresql&logoColor=white) |  Latest  |
-|                      ![Groq](https://img.shields.io/badge/Groq_API-Key-FF6B35)                       | Required |
-|                  ![Pinecone](https://img.shields.io/badge/Pinecone-Account-000000)                   | Required |
-
-</div>
-
-### Installation
+## Quick start
 
 ```bash
-# Clone repository
-git clone https://github.com/Inter-AI-Club-Umt/ai-hackathon-techverse2-team-muhammad-muzzammil.git
-cd ai-hackathon-techverse2-team-muhammad-muzzammil
+git clone https://github.com/SyedShah29/Nuskha.git
+cd Nuskha
 
-# Install dependencies
 npm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your credentials
-
-# Generate Prisma client
+cp .env.example .env        # fill database, auth, model, and voice keys
 npx prisma generate
-
-# Push database schema
 npx prisma db push
-
-# Run development server
-npm run dev
+npm run dev                 # http://127.0.0.1:3000
 ```
 
-<div align="center">
-
-🌐 Open [http://localhost:3000](http://localhost:3000) to view the application
-
-</div>
-
----
-
-## 📚 Documentation
-
-<div align="center">
-
-### 📖 User Guide
-
-[![User Docs](https://img.shields.io/badge/User_Documentation-localhost:3000/docs-10B981?style=for-the-badge)](http://localhost:3000/docs)
-
-### 🔧 Developer Documentation
-
-|                 Document                  | Description                |
-| :---------------------------------------: | :------------------------- |
-|         📋 [Index](docs/index.md)         | Documentation overview     |
-|  🏗️ [Architecture](docs/architecture.md)  | System design & tech stack |
-|        🤖 [Agents](docs/agents.md)        | AI agents documentation    |
-| 🔌 [API Reference](docs/api-reference.md) | Complete API docs          |
-|  🗄️ [Database](docs/database-schema.md)   | Schema & models            |
-|   ⚙️ [Environment](docs/environment.md)   | Setup guide                |
-|    🎨 [Components](docs/components.md)    | UI components              |
-
-</div>
-
----
-
-## 🔌 API Endpoints
-
-<div align="center">
-
-| Endpoint               | Method | Description               |
-| :--------------------- | :----: | :------------------------ |
-| `/api/clinical-chat`   | `POST` | Process interview message |
-| `/api/medical-history` | `POST` | Submit medical history    |
-| `/api/reports`         | `GET`  | Get user's reports        |
-| `/api/reports/[id]`    | `PUT`  | Doctor review action      |
-| `/api/voice/stt`       | `POST` | Speech-to-text            |
-| `/api/voice/tts`       | `POST` | Text-to-speech            |
-
-</div>
-
----
-
-## 🔄 Workflow
-
-<div align="center">
-
-### Patient Journey
-
-```mermaid
-graph LR
-    A[🔐 Signup] --> B[📝 Onboarding]
-    B --> C[🎙️ Interview]
-    C --> D[📋 Report]
-    D --> E[💊 Prescription]
-```
-
-### Doctor Journey
-
-```mermaid
-graph LR
-    A[🔐 Signup] --> B[👨‍⚕️ Profile]
-    B --> C[📊 Dashboard]
-    C --> D[✅ Review]
-    D --> E[📝 Prescribe]
-```
-
-</div>
-
----
-
-## 📁 Project Structure
-
-```
-nuskha/
-├── 📂 app/                    # Next.js App Router
-│   ├── 📂 (auth)/            # Auth pages
-│   ├── 📂 api/               # API endpoints
-│   ├── 📂 docs/              # User documentation
-│   ├── 📂 doctor/            # Doctor portal
-│   └── 📂 patient/           # Patient portal
-├── 📂 components/            # React components
-├── 📂 docs/                  # Developer documentation
-├── 📂 lib/
-│   └── 📂 agents/           # AI agent implementations
-├── 📂 prisma/               # Database schema
-└── 📂 public/               # Static assets
-```
-
----
-
-## ⚙️ Environment Variables
-
-```env
-# Database
-DATABASE_URL="postgresql://..."
-
-# Authentication
-BETTER_AUTH_SECRET="your-secret-key"
-BETTER_AUTH_URL="http://localhost:3000"
-
-# AI Services
-GROQ_API_KEY="gsk_..."
-PINECONE_API_KEY="..."
-PINECONE_INDEX_NAME="medical-fast-search"
-
-# Voice Services
-ELEVENLABS_API_KEY="..."
-UPLIFT_API_KEY="..."
-```
-
-> 📖 See [docs/environment.md](docs/environment.md) for complete setup guide
-
----
-
-## 🧪 Development
+Production:
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run linter
-npx prisma studio  # Open database UI
+npm run build
+npm run start
 ```
+
+### Environment
+
+`.env.example` documents every key. The main groups are:
+
+- `DATABASE_URL`, `DIRECT_URL` — PostgreSQL connections.
+- `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL` — session signing and base URL.
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` — Google sign-in.
+- `GEMINI_API_KEY`, `GROQ_API_KEY` — model providers.
+- `PINECONE_API_KEY`, `PINECONE_INDEX_NAME` — medical retrieval index.
+- `ELEVENLABS_API_KEY` — voice synthesis.
+- `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `LIVEKIT_WS_URL` — realtime media.
+- `NEXT_PUBLIC_APP_URL` — public application URL.
+
+### Database
+
+```bash
+npx prisma generate
+npx prisma db push
+npx prisma studio
+```
+
+---
+
+## API
+
+```text
+POST /api/clinical-chat            interview turn with agent orchestration
+GET  /api/medical-history          patient history
+GET  /api/patient/stats            patient dashboard metrics
+POST /api/vision-analyze           image analysis
+POST /api/voice/stt                speech to text
+POST /api/voice/tts                text to speech
+GET  /api/emergency-hospitals      nearby emergency facilities
+GET  /api/doctors                  doctor directory
+GET  /api/doctors/check            availability check
+GET  /api/doctors/stats            doctor dashboard metrics
+GET  /api/doctors/reports          assigned reports
+GET  /api/reports                  report list
+GET  /api/reports/{id}             full report
+POST /api/reports/{id}/chat        report-scoped follow-up
+GET  /api/reports/{id}/fhir        FHIR export
+POST /api/reports/{id}/prescription generate a prescription
+POST /api/reports/{id}/review      review decision
+GET  /api/user/role                current role
+POST /api/user/role                set role
+```
+
+---
+
+## Project layout
+
+```text
+app/
+├── (auth)/            login and signup
+├── patient/           intake, interview, profile, dashboard
+├── doctor/            onboarding, dashboard, report review, profile
+├── api/               route handlers for chat, reports, voice, doctors, auth
+├── docs/              in-app documentation
+└── page.tsx           marketing site
+components/            landing, auth, layout, shared, and UI components
+lib/                   agents, auth, prisma, retrieval, and helpers
+prisma/                schema and database configuration
+```
+
+---
+
+## Author
+
+Built end-to-end by **Syed Hasaan Shah**.
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
